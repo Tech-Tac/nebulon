@@ -8,9 +8,9 @@ This project is still early in development and generally not usable for daily ch
 
 ### Features (as of now)
 
-- Native performance: no more resource-hungry Chromium instances or Javascript runtimes.
+- Near-native performance: no more resource-hungry Chromium instances or Javascript runtimes.
 
-And that's about it for now, but other features are planned and are being worked on:
+And that's about it for now, but there are other features planned and being worked on, like:
 
 - Background notification service: get notifications from all of your accounts without having to keep the app open and consuming memory.
 
@@ -24,8 +24,10 @@ If you want a feature added here, you can create an issue or start working on it
 
 ### Acknowledgements
 
+If you use this client, there is a (small) chance your account may receive bans, as is the case with any non-official client, so use this at your own risk and with accounts you don't mind potentially losing.
+
 This code is licensed under the GNU GPL v3 copyleft license.
 
-This project is unaffiliated with Discord inc.
+This project is not affiliated with or endorsed by Discord.
 
 "Discord" and the Discord logo are registered trademarks of Discord inc.
