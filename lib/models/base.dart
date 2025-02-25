@@ -5,22 +5,26 @@ class Snowflake {
   factory Snowflake(dynamic input) {
     if (input is int) {
       return Snowflake.fromInt(input);
-    } else if (input is String) {
+    } else if (input is String && input.isNotEmpty) {
       return Snowflake.fromInt(int.parse(input));
     } else if (input is Snowflake) {
       return input;
     }
-    throw ArgumentError('Cannot convert ${input.runtimeType} $input to Snowflake.');
+    throw ArgumentError(
+      'Cannot convert ${input.runtimeType} "$input" to Snowflake.',
+    );
   }
 
   const Snowflake.fromInt(this.value);
 
-  factory Snowflake.fromDate(DateTime date) => Snowflake.fromInt((date.millisecondsSinceEpoch - discordEpoch) << 22);
+  factory Snowflake.fromDate(DateTime date) =>
+      Snowflake.fromInt((date.millisecondsSinceEpoch - discordEpoch) << 22);
 
   final int value;
 
   /// The time this id was generated.
-  DateTime get date => DateTime.fromMillisecondsSinceEpoch((value >> 22) + discordEpoch);
+  DateTime get date =>
+      DateTime.fromMillisecondsSinceEpoch((value >> 22) + discordEpoch);
 
   /// The worker that generated this id.
   int get internalWorkerId => (value & 0x3E0000) >> 17;
@@ -32,9 +36,12 @@ class Snowflake {
   int get increment => value & 0xFFF;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || value == Snowflake(other).value;
-  bool operator >=(Object other) => identical(this, other) || value >= Snowflake(other).value;
-  bool operator <=(Object other) => identical(this, other) || value <= Snowflake(other).value;
+  bool operator ==(Object other) =>
+      identical(this, other) || value == Snowflake(other).value;
+  bool operator >=(Object other) =>
+      identical(this, other) || value >= Snowflake(other).value;
+  bool operator <=(Object other) =>
+      identical(this, other) || value <= Snowflake(other).value;
   bool operator >(Object other) => value > Snowflake(other).value;
   bool operator <(Object other) => value < Snowflake(other).value;
 
@@ -50,7 +57,8 @@ abstract class Resource {
   final Snowflake id;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Resource && id == other.id;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Resource && id == other.id;
 
   @override
   int get hashCode => id.value;

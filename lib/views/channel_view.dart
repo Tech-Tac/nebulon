@@ -89,21 +89,19 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
     );
     _scrollController.addListener(_onScroll);
     _typingStreamSubscription = _api.channelTypingStream.listen(_onTypingStart);
-    _fetchMessages();
     _messageStreamSubscription = _api.messageEventStream.listen(
       _onMessageEvent,
     );
+    _fetchMessages();
   }
 
   void onChannelSwitch() {
-    _isTyping = false;
     _resetTypingTimer?.cancel();
+    _isTyping = false;
     setState(() => _typingUsers.clear());
     _inputController.clear();
     _inputFocusNode.requestFocus();
-    if (!widget.channel.fullyLoaded) {
-      _fetchMessages();
-    }
+    _fetchMessages();
   }
 
   @override
@@ -147,7 +145,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 32 &&
-        !(_isLoading || widget.channel.fullyLoaded)) {
+        !(widget.channel.isLoading || widget.channel.fullyLoaded)) {
       log("Reached top and fetching more messages");
       _fetchMessages();
     }
@@ -191,39 +189,31 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
     return widget.channel.messages!;
   }
 
-  bool _isLoading = true;
   bool _hasError = false;
 
   Future<List<MessageModel>> _fetchMessages({int count = 50}) async {
-    if (widget.channel.fullyLoaded) return [];
-
-    setState(() {
-      _hasError = false;
-      _isLoading = true;
-    });
-
     // the user may navigate to a different channel before the messages load,
     // so we store the current channel to put the messages in when data arrives
     // regardless of the then selected channel.
+
     final channel = widget.channel;
+
+    if (channel.fullyLoaded || channel.isLoading) return [];
+
+    setState(() {
+      _hasError = false;
+    });
 
     List<MessageModel> data = [];
 
     try {
-      data = await _api.getMessages(
-        channelId: channel.id,
-        before: messages.lastOrNull?.id,
-        limit: count,
-      );
-
-      channel.messages ??= [];
-      if (data.isNotEmpty) channel.messages!.addAll(data);
-      if (data.length < count) channel.fullyLoaded = true;
+      if (mounted) setState(() => channel.isLoading = true);
+      data = await channel.fetchMessages(count: count) ?? [];
     } catch (error) {
       log(error.toString());
       if (mounted) setState(() => _hasError = true);
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() => channel.isLoading = false);
     }
 
     return data;
@@ -236,12 +226,17 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
       children: [
         Expanded(
           child: SuperListView.builder(
+            key: PageStorageKey(widget.channel.id),
             reverse: true,
             padding: const EdgeInsets.only(bottom: 16),
             controller: _scrollController,
             itemCount:
                 messages.length +
-                (_hasError || _isLoading || widget.channel.fullyLoaded ? 1 : 0),
+                (_hasError ||
+                        widget.channel.isLoading ||
+                        widget.channel.fullyLoaded
+                    ? 1
+                    : 0),
             itemBuilder: (listContext, index) {
               if (index == (messages.length)) {
                 if (_hasError) {
@@ -261,7 +256,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
                       ),
                     ),
                   );
-                } else if (_isLoading) {
+                } else if (widget.channel.isLoading) {
                   return const Padding(
                     padding: EdgeInsets.only(top: 16),
                     child: Center(child: CircularProgressIndicator()),

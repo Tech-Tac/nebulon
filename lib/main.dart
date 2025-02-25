@@ -93,7 +93,7 @@ class MyApp extends ConsumerWidget {
                       data: (_) {},
                       error: (err, _) => log(err.toString()),
                       loading: () {
-                        SessionManager.getUserSession((snapshot.data)!).then((
+                        SessionManager.getUserSession(snapshot.data!).then((
                           token,
                         ) {
                           // actual login vvv

@@ -97,7 +97,7 @@ class SidebarMenuState extends ConsumerState<SidebarMenu>
 }
 
 class UserCard extends ConsumerStatefulWidget {
-  UserCard({super.key, required this.collapsed});
+  const UserCard({super.key, required this.collapsed});
 
   final bool collapsed;
 
@@ -275,7 +275,7 @@ class UserMenu extends ConsumerWidget {
                 Text("Online"),
                 ElevatedButton(
                   onPressed: () {
-                    SessionManager.removeUser(data.id);
+                    SessionManager.removeUser(data.id.toString());
                     Navigator.of(context).pushReplacementNamed("/login");
                   },
                   child: Text("Logout"),

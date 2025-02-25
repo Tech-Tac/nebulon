@@ -64,8 +64,8 @@ class ChannelModel extends CacheableResource {
     this.messages,
     this.fullyLoaded = false,
     ApiService? service,
-  }) {
-    _listener ??= service?.messageEventStream.listen(_onNewMessage);
+  }) : _service = service {
+    _listener ??= _service?.messageEventStream.listen(_onNewMessage);
     _cache.getOrCreate(this);
   }
   final int? guildId;
@@ -75,8 +75,10 @@ class ChannelModel extends CacheableResource {
   int? position = 0;
   ChannelType type = ChannelType.text;
 
+  final ApiService? _service;
   List<MessageModel>? messages;
   bool fullyLoaded = false;
+  bool isLoading = false;
 
   String get displayName => name ?? "$id";
 
@@ -105,6 +107,20 @@ class ChannelModel extends CacheableResource {
           break;
       }
     }
+  }
+
+  Future<List<MessageModel>?> fetchMessages({int count = 50}) async {
+    final data = await _service?.getMessages(
+      channelId: id,
+      before: messages?.lastOrNull?.id,
+      limit: count,
+    );
+
+    messages ??= [];
+    if (data?.isNotEmpty ?? false) messages!.addAll(data!);
+    if ((data?.length ?? 0) < count) fullyLoaded = true;
+
+    return data;
   }
 
   static final CacheRegistry<ChannelModel> _cache = CacheRegistry();
