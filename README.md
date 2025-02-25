@@ -26,7 +26,7 @@ If you want a feature added here, you can create an issue or start working on it
 
 If you use this client, there is a (small) chance your account may receive bans, as is the case with any non-official client, so use this at your own risk and with accounts you don't mind potentially losing.
 
-This code is licensed under the GNU GPL v3 copyleft license.
+This code is licensed under the copyleft GNU General Public License (GPL) v3.
 
 This project is not affiliated with or endorsed by Discord.
 
