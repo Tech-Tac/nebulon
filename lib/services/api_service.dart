@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:nebulon/models/base.dart';
@@ -196,11 +195,28 @@ class ApiService {
     );
   }
 
-  Future<UserModel> getUser(int id) async {
+  Future<UserModel> getUser(Snowflake id) async {
     return UserModel.fromJson((await _dio.get("/users/$id")).data);
   }
 
   Future<void> sendTyping(Snowflake channelId) async {
     await _dio.post("/channels/$channelId/typing");
+  }
+
+  void subscribeToGuild(
+    Snowflake guildId, {
+    bool typing = true,
+    bool activities = true,
+    bool threads = true,
+  }) {
+    _gateway?.send({
+      "op": 14,
+      "d": {
+        "guild_id": guildId.value,
+        "typing": typing,
+        "activities": activities,
+        "threads": threads,
+      },
+    });
   }
 }

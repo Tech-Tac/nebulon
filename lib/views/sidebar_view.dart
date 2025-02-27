@@ -455,10 +455,7 @@ class GuildList extends ConsumerWidget {
                     item: const Icon(Icons.chat_bubble),
                     text: "Direct Messages",
                     isSelected: selectedGuild == null,
-                    onTap:
-                        () =>
-                            ref.read(selectedGuildProvider.notifier).state =
-                                null,
+                    onTap: () => selectedGuildNotifier.set(null),
                   ),
                 ),
 
@@ -484,7 +481,7 @@ class GuildList extends ConsumerWidget {
                       )
                       : null,
               text: guild.name,
-              onTap: () => selectedGuildNotifier.state = guild,
+              onTap: () => selectedGuildNotifier.set(guild),
               isSelected: selectedGuild == guild,
               hasDot: true,
             ),
@@ -597,7 +594,7 @@ class ChannelCategory extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       // channel categories
       child: ExpansionTile(
-        key: PageStorageKey("Category $id"),
+        key: PageStorageKey("${id}_channel_category"),
         title: Text(title),
         initiallyExpanded: true,
         dense: true,

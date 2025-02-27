@@ -50,9 +50,10 @@ class MessageModel extends Resource {
       content: json["content"],
       channelId: Snowflake(json["channel_id"]),
       author: UserModel.fromJson(json["author"]),
-      timestamp: DateTime.parse(json["timestamp"]),
+      timestamp: DateTime.parse(json["timestamp"]).toLocal(),
       attachments: json["attachments"],
-      editedTimestamp: DateTime.tryParse(json["edited_timestamp"] ?? ""),
+      editedTimestamp:
+          DateTime.tryParse(json["edited_timestamp"] ?? "")?.toLocal(),
       reference:
           (json["referenced_message"] != null
               ? MessageModel.fromJson(json["referenced_message"])

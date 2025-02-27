@@ -120,7 +120,10 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
   final Map<UserModel, Timer> _typingUsers = {};
 
   void _onTypingEvent(ChannelTypingEvent event) {
-    if (event.channelId != widget.channel.id) return;
+    if (event.channelId != widget.channel.id ||
+        event.userId == ref.read(connectedUserProvider).value?.id) {
+      return;
+    }
 
     UserModel.getById(event.userId).then((user) {
       setState(() {
@@ -264,7 +267,6 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
       children: [
         Expanded(
           child: SuperListView.builder(
-            key: PageStorageKey("${widget.channel.id}_message_list"),
             reverse: true,
             padding: const EdgeInsets.only(bottom: 16),
             controller: _scrollController,

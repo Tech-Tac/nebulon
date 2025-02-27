@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:nebulon/models/base.dart';
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/models/user.dart';
 import 'package:nebulon/services/api_service.dart';
@@ -86,15 +87,14 @@ class MemberModel {
   }
 }
 
-class GuildModel {
-  final int id;
+class GuildModel extends Resource {
   String name;
   String? iconHash;
   List<ChannelModel> channels;
   List<RoleModel> roles;
 
   GuildModel({
-    required this.id,
+    required super.id,
     required this.name,
     this.iconHash,
     required this.channels,
@@ -106,7 +106,7 @@ class GuildModel {
     ApiService? service,
   }) {
     return GuildModel(
-      id: int.parse(json["id"]),
+      id: Snowflake(json["id"]),
       name: json["name"],
       iconHash: json["icon"],
       channels:

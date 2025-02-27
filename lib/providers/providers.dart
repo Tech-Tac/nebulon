@@ -47,7 +47,24 @@ final connectedUserProvider = StreamProvider<UserModel>((ref) {
 });
 
 final guildsProvider = StateProvider<List<GuildModel>>((ref) => []);
-final selectedGuildProvider = StateProvider<GuildModel?>((ref) => null);
+
+class SelectedGuildProvider extends StateNotifier<GuildModel?> {
+  SelectedGuildProvider(this.ref) : super(null);
+
+  final Ref ref;
+
+  void set(GuildModel? newGuild) {
+    state = newGuild;
+    if (newGuild != null) {
+      ref.read(apiServiceProvider).valueOrNull?.subscribeToGuild(newGuild.id);
+    }
+  }
+}
+
+final selectedGuildProvider =
+    StateNotifierProvider<SelectedGuildProvider, GuildModel?>(
+      (ref) => SelectedGuildProvider(ref),
+    );
 
 class SelectedChannelNotifier extends StateNotifier<ChannelModel?> {
   SelectedChannelNotifier() : super(null);
