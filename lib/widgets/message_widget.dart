@@ -106,6 +106,14 @@ class _MessageWidgetState extends State<MessageWidget>
                       SelectableText(
                         widget.message.content,
                         focusNode: FocusNode(canRequestFocus: false),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color:
+                              widget.message.hasError
+                                  ? Theme.of(context).colorScheme.error
+                                  : widget.message.isPending
+                                  ? Theme.of(context).hintColor
+                                  : null,
+                        ),
                       ),
                     if (widget.message.editedTimestamp != null)
                       Tooltip(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:nebulon/models/base.dart';
@@ -199,7 +200,7 @@ class ApiService {
     return UserModel.fromJson((await _dio.get("/users/$id")).data);
   }
 
-  void sendTyping(Snowflake channelId) {
-    _dio.post("/channels/$channelId/typing");
+  Future<void> sendTyping(Snowflake channelId) async {
+    await _dio.post("/channels/$channelId/typing");
   }
 }

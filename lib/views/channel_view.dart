@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nebulon/models/base.dart';
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/models/message.dart';
 import 'package:nebulon/models/user.dart';
@@ -23,7 +24,10 @@ class MainChannelView extends ConsumerWidget {
     final selectedChannel = ref.watch(selectedChannelProvider);
 
     return selectedChannel != null
-        ? ChannelView(channel: selectedChannel)
+        ? ChannelView(
+          key: ValueKey(selectedChannel.id),
+          channel: selectedChannel,
+        )
         : const Center(child: Text("Select a channel to start chatting"));
   }
 }
@@ -88,7 +92,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
       },
     );
     _scrollController.addListener(_onScroll);
-    _typingStreamSubscription = _api.channelTypingStream.listen(_onTypingStart);
+    _typingStreamSubscription = _api.channelTypingStream.listen(_onTypingEvent);
     _messageStreamSubscription = _api.messageEventStream.listen(
       _onMessageEvent,
     );
@@ -115,7 +119,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
 
   final Map<UserModel, Timer> _typingUsers = {};
 
-  void _onTypingStart(ChannelTypingEvent event) {
+  void _onTypingEvent(ChannelTypingEvent event) {
     if (event.channelId != widget.channel.id) return;
 
     UserModel.getById(event.userId).then((user) {
@@ -133,13 +137,17 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
 
   void _onMessageEvent(MessageEvent event) {
     if (event.channelId != widget.channel.id) return;
-    setState(() {
-      if (event.type == MessageEventType.create &&
-          _typingUsers.containsKey(event.message!.author)) {
+    if (event.type == MessageEventType.create) {
+      if (_typingUsers.containsKey(event.message!.author)) {
         _typingUsers[event.message!.author]!.cancel();
         _typingUsers.remove(event.message!.author);
+      } else if (event.message!.author.id ==
+              ref.read(connectedUserProvider).value!.id &&
+          _pendingMessages.isNotEmpty) {
+        _pendingMessages.removeLast();
       }
-    });
+    }
+    setState(() {});
   }
 
   void _onScroll() {
@@ -151,23 +159,50 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
     }
   }
 
+  final _pendingMessages = <MessageModel>[];
+
   void _sendMessage() {
     final text = _inputController.text.trim();
     if (text.isNotEmpty && text.length < 2000) {
-      try {
-        _api.sendMessage(widget.channel.id, text);
-      } catch (exception) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(
-              child: Center(
-                child: Text("Can't send message.\nError: $exception"),
-              ),
-            );
-          },
-        );
-      }
+      final pendingMessage = MessageModel(
+        id: Snowflake.fromDate(DateTime.now()),
+        author: ref.read(connectedUserProvider).value!,
+        content: text,
+        channelId: widget.channel.id,
+        timestamp: DateTime.now(),
+        isPending: true,
+      );
+      setState(() => _pendingMessages.insert(0, pendingMessage));
+
+      _api
+          .sendMessage(widget.channel.id, text)
+          .then(
+            (message) {
+              // this is handled in the message event listener because http responses are slower than ws events
+              /* if (!mounted) return;
+              setState(() {
+                _pendingMessages.remove(pendingMessage);
+              }); */
+            },
+            onError: (error) {
+              if (!mounted) return;
+              setState(() => pendingMessage.hasError = true);
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Center(
+                    child: Dialog(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text("Can't send message.\nError: $error"),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+
       _inputController.clear();
     }
   }
@@ -177,7 +212,10 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
   void _typing() {
     if (_isTyping) return;
     _isTyping = true;
-    _api.sendTyping(widget.channel.id);
+
+    _api.sendTyping(widget.channel.id).catchError((error) {
+      log("Error sending typing event: $error");
+    });
     _resetTypingTimer = Timer(
       const Duration(seconds: 10),
       () => _isTyping = false,
@@ -186,7 +224,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
 
   List<MessageModel> get messages {
     widget.channel.messages ??= [];
-    return widget.channel.messages!;
+    return [..._pendingMessages, ...widget.channel.messages!];
   }
 
   bool _hasError = false;
@@ -226,7 +264,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
       children: [
         Expanded(
           child: SuperListView.builder(
-            key: PageStorageKey(widget.channel.id),
+            key: PageStorageKey("${widget.channel.id}_message_list"),
             reverse: true,
             padding: const EdgeInsets.only(bottom: 16),
             controller: _scrollController,
@@ -271,8 +309,9 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
                 }
               }
               final MessageModel message = messages[index];
-              final MessageModel? prevMessage = widget.channel.messages
-                  ?.elementAtOrNull(index + 1);
+              final MessageModel? prevMessage = messages.elementAtOrNull(
+                index + 1,
+              );
 
               final bool showDayDivider =
                   message.timestamp.day != prevMessage?.timestamp.day;

@@ -20,12 +20,14 @@ enum MessageType {
 class MessageModel extends Resource {
   MessageType type = MessageType.normal;
   String content;
-  final int channelId;
+  final Snowflake channelId;
   UserModel author;
   DateTime timestamp;
   List<dynamic> attachments; // smh
   DateTime? editedTimestamp;
   MessageModel? reference;
+  bool isPending;
+  bool hasError = false;
 
   MessageModel({
     required super.id,
@@ -34,9 +36,10 @@ class MessageModel extends Resource {
     required this.channelId,
     required this.author,
     required this.timestamp,
-    required this.attachments,
+    this.attachments = const [],
     this.editedTimestamp,
     this.reference,
+    this.isPending = false,
   });
 
   @override
@@ -45,7 +48,7 @@ class MessageModel extends Resource {
       id: Snowflake(json["id"]),
       type: MessageType.getByValue(json["type"]),
       content: json["content"],
-      channelId: int.parse(json["channel_id"]),
+      channelId: Snowflake(json["channel_id"]),
       author: UserModel.fromJson(json["author"]),
       timestamp: DateTime.parse(json["timestamp"]),
       attachments: json["attachments"],
