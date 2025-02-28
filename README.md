@@ -6,17 +6,17 @@ A multi-platform native Discord client, aiming to provide the usual Discord expe
 
 This project is still early in development and generally not usable for daily chatting, however, you can help mature this project by contributing.
 
-### Features (as of now)
+### Main Features
 
 - Near-native performance: no more resource-hungry Chromium instances or Javascript runtimes.
 
 And that's about it for now, but there are other features planned and being worked on, like:
 
-- Background notification service: get notifications from all of your accounts without having to keep the app open and consuming memory.
+- Background notifications: get notifications from all of your accounts without having to keep the app open and consuming memory.
 
-- Zen mode: fullscreen a particular channel or pop it into its own window.
+- Modular UI: fullscreen a particular channel or pop it into its own window.
 
-- Per-server theme customization: customize your interface theme per-server, or use the theme server owners provide for their server.
+- Theme customization: customize your interface theme globally or per-server.
 
 If you want a feature added here, you can create an issue or start working on it. Please note that features that violate Discord's terms of service won't be accepted.
 
@@ -24,7 +24,7 @@ If you want a feature added here, you can create an issue or start working on it
 
 ### Acknowledgements
 
-If you use this client, there is a (small) chance your account may receive bans, as is the case with any non-official client, so use this at your own risk and with accounts you don't mind potentially losing.
+If you use this client, there is a (small) chance your account may receive bans or limitations, as is the case with any non-official client, so use this at your own risk and with accounts you don't mind potentially losing.
 
 This code is licensed under the copyleft GNU General Public License (GPL) v3.
 
