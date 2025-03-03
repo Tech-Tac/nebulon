@@ -10,6 +10,7 @@ import 'package:nebulon/views/splash_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:nebulon/widgets/window_frame.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,7 @@ void main() async {
       title: "Nebulon",
       center: true,
       minimumSize: Size(360, 360),
+      windowButtonVisibility: false,
       titleBarStyle: TitleBarStyle.hidden,
       backgroundColor: Colors.transparent,
     );
@@ -68,7 +70,7 @@ class MyApp extends ConsumerWidget {
       ),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => VirtualWindowFrameInit()(context, child),
+      builder: (_, child) => WindowFrame(child: child!),
 
       // im not even using these
       routes: {

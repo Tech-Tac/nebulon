@@ -119,25 +119,6 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
 
   final Map<UserModel, Timer> _typingUsers = {};
 
-  void _onTypingEvent(ChannelTypingEvent event) {
-    if (event.channelId != widget.channel.id ||
-        event.userId == ref.read(connectedUserProvider).value?.id) {
-      return;
-    }
-
-    UserModel.getById(event.userId).then((user) {
-      setState(() {
-        _typingUsers[user]?.cancel();
-
-        _typingUsers[user] = Timer(const Duration(seconds: 5), () {
-          setState(() {
-            _typingUsers.remove(user);
-          });
-        });
-      });
-    });
-  }
-
   void _onMessageEvent(MessageEvent event) {
     if (event.channelId != widget.channel.id) return;
     if (event.type == MessageEventType.create) {
@@ -210,6 +191,24 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
     }
   }
 
+  void _onTypingEvent(ChannelTypingEvent event) async {
+    if (event.channelId != widget.channel.id ||
+        event.userId == ref.read(connectedUserProvider).value?.id) {
+      return;
+    }
+
+    final user = await UserModel.getById(event.userId);
+    _typingUsers[user]?.cancel();
+    if (!mounted) return;
+    setState(() {
+      _typingUsers[user] = Timer(const Duration(seconds: 10), () {
+        _typingUsers.remove(user);
+        if (!mounted) return;
+        setState(() {});
+      });
+    });
+  }
+
   bool _isTyping = false;
   Timer? _resetTypingTimer;
   void _typing() {
@@ -219,6 +218,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
     _api.sendTyping(widget.channel.id).catchError((error) {
       log("Error sending typing event: $error");
     });
+    _resetTypingTimer?.cancel();
     _resetTypingTimer = Timer(
       const Duration(seconds: 10),
       () => _isTyping = false,
@@ -263,12 +263,16 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
   @override
   Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).padding;
+    final typingTextStyle = Theme.of(context).textTheme.bodySmall!.copyWith(
+      color: Theme.of(context).hintColor,
+      fontSize: 10,
+    );
+
     return Column(
       children: [
         Expanded(
           child: SuperListView.builder(
             reverse: true,
-            padding: const EdgeInsets.only(bottom: 16),
             controller: _scrollController,
             itemCount:
                 messages.length +
@@ -349,35 +353,37 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
         ),
         Visibility(
           visible: _typingUsers.isNotEmpty,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 2),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ..._typingUsers.keys.map((user) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    spacing: 6.0,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        foregroundImage: NetworkImage(
-                          "https://cdn.discordapp.com/avatars/${user.id}/${user.avatarHash}.png?size=16",
-                        ),
-                        radius: 8,
+          maintainState: true,
+          maintainAnimation: true,
+          maintainSize: true,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            alignment: Alignment.centerLeft,
+            height: 18,
+            color: Theme.of(context).colorScheme.surface,
+            child: RichText(
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              text: TextSpan(
+                style: typingTextStyle,
+                children: [
+                  ..._typingUsers.keys.map((user) {
+                    return TextSpan(
+                      text: user.displayName,
+                      style: typingTextStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).hintColor.withAlpha(160),
                       ),
-                      Text(
-                        user.displayName,
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ],
-                  );
-                }),
-                Text(
-                  _typingUsers.length > 1 ? " are typing..." : " is typing...",
-                ),
-              ],
+                    );
+                  }),
+                  TextSpan(
+                    text:
+                        _typingUsers.length > 1
+                            ? " are typing..."
+                            : " is typing...",
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -413,17 +419,13 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
                           context,
                         ).colorScheme.onSurface.withAlpha(128),
                       ),
-                      contentPadding: const EdgeInsets.all(13),
+                      contentPadding: const EdgeInsets.all(14),
                       border: InputBorder.none,
                     ),
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: _sendMessage,
-                icon: const Icon(Icons.send),
-                padding: const EdgeInsets.all(12),
-              ),
+              IconButton(onPressed: _sendMessage, icon: const Icon(Icons.send)),
             ],
           ),
         ),
@@ -437,6 +439,9 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
     _inputController.dispose();
     _inputFocusNode.dispose();
     _resetTypingTimer?.cancel();
+    for (var timer in _typingUsers.values) {
+      timer.cancel();
+    }
     _typingStreamSubscription.cancel();
     _messageStreamSubscription.cancel();
     super.dispose();

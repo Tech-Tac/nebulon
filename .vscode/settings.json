@@ -2,6 +2,7 @@
     "cmake.ignoreCMakeListsMissing": true,
     "cSpell.words": [
         "nebulon",
+        "resizer",
         "techtac"
     ]
 }

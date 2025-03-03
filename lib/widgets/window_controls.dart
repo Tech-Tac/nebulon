@@ -150,6 +150,7 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
       windowManager.isFullScreen(),
       windowManager.isMaximized(),
     ]);
+    if (!mounted) return;
     setState(() {
       _isFocused = windowState[0];
       _isFullscreen = windowState[1];
