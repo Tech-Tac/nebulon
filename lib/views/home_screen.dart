@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/providers/providers.dart';
-import 'package:nebulon/views/channel_view.dart';
+import 'package:nebulon/views/channel/channel_view.dart';
 import 'package:nebulon/views/sidebar_view.dart';
+import 'package:nebulon/widgets/resizable_sidebar.dart';
 import 'package:nebulon/widgets/window_controls.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
@@ -80,8 +81,8 @@ class ViewBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(apiServiceProvider);
     final ChannelModel? selectedChannel = ref.watch(selectedChannelProvider);
+    final bool hasDrawer = ref.watch(hasDrawerProvider);
 
     final String? title = selectedChannel?.displayName;
 
@@ -95,6 +96,13 @@ class ViewBody extends ConsumerWidget {
                   ? const Icon(Icons.discord)
                   : Icon(getChannelSymbol(selectedChannel.type)),
           title: Text(title ?? "Nebulon"),
+          startActions: [
+            if (hasDrawer)
+              IconButton(
+                onPressed: Scaffold.of(context).openDrawer,
+                icon: Icon(Icons.menu),
+              ),
+          ],
         ),
         Expanded(child: MainChannelView()),
       ],

@@ -84,6 +84,7 @@ class MyApp extends ConsumerWidget {
           // this is a mess
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
+              // this is quite useless, doesn't even show up for a split second
               return const SplashScreen();
             case ConnectionState.done:
               if (snapshot.hasData && snapshot.data != null) {

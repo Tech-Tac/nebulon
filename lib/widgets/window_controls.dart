@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nebulon/providers/providers.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -206,20 +204,31 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
   }
 }
 
-class TitleBar extends ConsumerWidget {
-  const TitleBar({super.key, this.title, this.icon, this.color});
+class TitleBar extends StatelessWidget {
+  const TitleBar({
+    super.key,
+    this.title,
+    this.icon,
+    this.color,
+    this.height = 48,
+    this.showWindowControls = true,
+    this.startActions,
+    this.endActions,
+  });
   final Widget? title;
   final Widget? icon;
   final Color? color;
+  final double height;
+  final bool showWindowControls;
+  final List<Widget>? startActions;
+  final List<Widget>? endActions;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool hasDrawer = ref.watch(hasDrawerProvider);
-
+  Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).padding;
 
     return Container(
-      height: 48,
+      height: height,
       color: color ?? Theme.of(context).colorScheme.surfaceContainerHigh,
       child: Padding(
         padding: EdgeInsets.only(
@@ -229,16 +238,12 @@ class TitleBar extends ConsumerWidget {
         child: Row(
           children: [
             if (UniversalPlatform.isMacOS) WindowControls(),
-            if (hasDrawer)
-              IconButton(
-                onPressed: Scaffold.of(context).openDrawer,
-                icon: Icon(Icons.menu),
-              ),
+            if (startActions != null) ...startActions!,
             Expanded(
               child: DragToMoveArea(
                 child: Container(
                   height: double.infinity,
-                  padding: EdgeInsets.only(left: hasDrawer ? 0 : 8),
+                  padding: EdgeInsets.only(left: 8),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 8,
@@ -249,6 +254,7 @@ class TitleBar extends ConsumerWidget {
                           child: DefaultTextStyle(
                             style: Theme.of(context).textTheme.titleMedium!,
                             overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                             child: title!,
                           ),
                         ),
@@ -257,8 +263,11 @@ class TitleBar extends ConsumerWidget {
                 ),
               ),
             ),
-
-            if (UniversalPlatform.isDesktop && !UniversalPlatform.isMacOS)
+            if (endActions != null) ...endActions!,
+            // TODO: add macos window controls somewhere
+            if (showWindowControls &&
+                UniversalPlatform.isDesktop &&
+                !UniversalPlatform.isMacOS)
               WindowControls(),
           ],
         ),
