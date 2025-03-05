@@ -2,7 +2,7 @@ import 'package:nebulon/models/base.dart';
 import 'package:nebulon/models/user.dart';
 
 enum MessageType {
-  unsupported(-1),
+  unknown(-1),
   normal(0),
   reply(19);
 
@@ -12,23 +12,12 @@ enum MessageType {
   static MessageType getByValue(int val) {
     return MessageType.values.firstWhere(
       (t) => t.value == val,
-      orElse: () => MessageType.unsupported,
+      orElse: () => MessageType.unknown,
     );
   }
 }
 
 class MessageModel extends Resource {
-  MessageType type = MessageType.normal;
-  String content;
-  final Snowflake channelId;
-  UserModel author;
-  DateTime timestamp;
-  List<dynamic> attachments; // smh
-  DateTime? editedTimestamp;
-  MessageModel? reference;
-  bool isPending;
-  bool hasError = false;
-
   MessageModel({
     required super.id,
     this.type = MessageType.normal,
@@ -40,7 +29,21 @@ class MessageModel extends Resource {
     this.editedTimestamp,
     this.reference,
     this.isPending = false,
+    this.hasError = false,
+    this.nonce,
   });
+
+  final Snowflake channelId;
+  MessageType type = MessageType.normal;
+  UserModel author;
+  String content;
+  DateTime timestamp;
+  List<dynamic> attachments;
+  DateTime? editedTimestamp;
+  MessageModel? reference;
+  bool isPending = false; // local state
+  bool hasError = false; // same here
+  String? nonce; // used to determine which message this was while pending
 
   @override
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -58,6 +61,7 @@ class MessageModel extends Resource {
           (json["referenced_message"] != null
               ? MessageModel.fromJson(json["referenced_message"])
               : null),
+      nonce: json["nonce"],
     );
   }
 }

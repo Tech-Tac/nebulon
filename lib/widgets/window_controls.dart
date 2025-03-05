@@ -57,7 +57,8 @@ class _WindowButtonState extends State<WindowButton> {
     final bool isCircle = shape == WindowButtonShape.circle;
     final Color hoverColor =
         widget.hoverColor ?? Theme.of(context).highlightColor;
-    final double spacing = widget.spacing ?? (isCircle ? 3 : 0);
+    final Color color = widget.color ?? hoverColor.withAlpha(0);
+    final double spacing = widget.spacing ?? (isCircle ? 4 : 0);
     final double width = widget.size ?? (isCircle ? 24 : 48);
     final double? height = (isCircle ? widget.size ?? 24 : null);
     final double iconSize = widget.iconSize ?? 16;
@@ -76,10 +77,7 @@ class _WindowButtonState extends State<WindowButton> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-            color:
-                _isHovered
-                    ? hoverColor
-                    : (widget.color ?? hoverColor.withAlpha(0)),
+            color: _isHovered ? hoverColor : color,
           ),
           child: IconTheme(
             data: IconTheme.of(context).copyWith(
@@ -227,49 +225,52 @@ class TitleBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).padding;
 
-    return Container(
+    return SizedBox(
       height: height,
-      color: color ?? Theme.of(context).colorScheme.surfaceContainerHigh,
-      child: Padding(
-        padding: EdgeInsets.only(
-          top: screenPadding.top,
-          right: screenPadding.right,
-        ),
-        child: Row(
-          children: [
-            if (UniversalPlatform.isMacOS) WindowControls(),
-            if (startActions != null) ...startActions!,
-            Expanded(
-              child: DragToMoveArea(
-                child: Container(
-                  height: double.infinity,
-                  padding: EdgeInsets.only(left: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 8,
-                    children: [
-                      if (icon != null) icon!,
-                      if (title != null)
-                        Expanded(
-                          child: DefaultTextStyle(
-                            style: Theme.of(context).textTheme.titleMedium!,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            child: title!,
-                          ),
-                        ),
-                    ],
+      child: ColoredBox(
+        color: color ?? Theme.of(context).colorScheme.surfaceContainerHigh,
+        child: Padding(
+          padding: EdgeInsets.only(top: screenPadding.top),
+          child: Row(
+            children: [
+              if (UniversalPlatform.isMacOS) WindowControls(),
+              if (startActions != null) ...startActions!,
+
+              // main draggable title area
+              Expanded(
+                child: DragToMoveArea(
+                  child: SizedBox.expand(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 8,
+                        children: [
+                          if (icon != null) icon!,
+                          if (title != null)
+                            Expanded(
+                              child: DefaultTextStyle(
+                                style: Theme.of(context).textTheme.titleMedium!,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                child: title!,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (endActions != null) ...endActions!,
-            // TODO: add macos window controls somewhere
-            if (showWindowControls &&
-                UniversalPlatform.isDesktop &&
-                !UniversalPlatform.isMacOS)
-              WindowControls(),
-          ],
+
+              if (endActions != null) ...endActions!,
+
+              if (showWindowControls &&
+                  UniversalPlatform.isDesktop &&
+                  !UniversalPlatform.isMacOS)
+                WindowControls(),
+            ],
+          ),
         ),
       ),
     );

@@ -43,6 +43,7 @@ class ChannelTypingEvent {
   });
 }
 
+// ignore: non_constant_identifier_names
 final DiscordAPIOptions = BaseOptions(
   baseUrl: "https://discord.com/api/v9/",
   responseType: ResponseType.json,
@@ -186,13 +187,28 @@ class ApiService {
     return (data as List).map((d) => MessageModel.fromJson(d)).toList();
   }
 
-  Future<MessageModel> sendMessage(Snowflake channelId, String content) async {
-    return MessageModel.fromJson(
-      (await _dio.post(
-        "/channels/$channelId/messages",
-        data: {"content": content},
-      )).data,
+  int _messageCount = 0;
+
+  getNextNonce() {
+    final nonce =
+        DateTime.now().millisecondsSinceEpoch.toString() +
+        _messageCount.toString();
+    _messageCount++;
+    return nonce;
+  }
+
+  Future<MessageModel> sendMessage(
+    Snowflake channelId,
+    String content,
+    String nonce,
+  ) async {
+    final response = await _dio.post(
+      "/channels/$channelId/messages",
+      data: {"content": content, "nonce": nonce},
     );
+    final message = MessageModel.fromJson(response.data);
+    message.nonce = nonce;
+    return message;
   }
 
   Future<UserModel> getUser(Snowflake id) async {
