@@ -10,17 +10,17 @@ This project is still early in development and is generally not _yet_ usable for
 
 ## Main Features
 
-- Near-native performance: no more resource-hungry Chromium instances or Javascript runtimes.
+- **Near-native performance**: no more resource-hungry Chromium instances or Javascript runtimes.
 
 And that's about it for now, but there are other features planned and being worked on, including:
 
-- Background notifications: get notifications from all of your accounts without having to keep the app open and consuming memory.
+- **Background notifications**: get notifications from all of your accounts without having to keep the app open and consuming memory.
 
-- Modular UI: fullscreen a particular channel or pop it into its own window.
+- **Modular UI**: fullscreen a particular channel or pop it into its own window.
 
-- Theme customization: customize your interface theme globally or per-server.
+- **Customization**: customize your interface theme globally or per-server.
 
-If you want a feature added here, you can create an issue or start working on it. Please note that features that violate Discord's terms of service won't be accepted.
+If you want a feature added, you can open an issue and/or start working on it. Please note that features that violate Discord's terms of service won't be accepted.
 
 ## Acknowledgements
 
