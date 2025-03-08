@@ -40,6 +40,10 @@ jobs:
         with:
           channel: stable
           cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
+          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
       - run: flutter --version
 
       - name: Install Linux Dependencies
@@ -66,7 +70,7 @@ jobs:
           elif [[ "${{ matrix.platform }}" == "ios" ]]; then
             flutter build ios --release --no-codesign
           elif [[ "${{ matrix.platform }}" == "web" ]]; then
-            flutter build web --release --wasm
+            flutter build web --release
           elif [[ "${{ matrix.platform }}" == "windows" ]]; then
             flutter build windows
           elif [[ "${{ matrix.platform }}" == "linux" ]]; then
