@@ -1,0 +1,63 @@
+name: Multi-Platform Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build App
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [android, ios, web, windows, linux, macos]
+        exclude:
+          - platform: ios  # Exclude iOS for non-macOS builds (macOS required for iOS)
+        include:
+          - platform: ios
+            runs-on: macos-latest  # Required for iOS builds
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build for ${{ matrix.platform }}
+        run: |
+          if [ "${{ matrix.platform }}" == "android" ]; then
+            flutter build apk --release
+          elif [ "${{ matrix.platform }}" == "ios" ]; then
+            flutter build ios --no-codesign
+          elif [ "${{ matrix.platform }}" == "web" ]; then
+            flutter build web
+          elif [ "${{ matrix.platform }}" == "windows" ]; then
+            flutter build windows
+          elif [ "${{ matrix.platform }}" == "linux" ]; then
+            flutter build linux
+          elif [ "${{ matrix.platform }}" == "macos" ]; then
+            flutter build macos
+          fi
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.platform }}
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/ios/iphoneos/*.app
+            build/web
+            build/windows/runner/Release
+            build/linux/x64/release/bundle
+            build/macos/Build/Products/Release
