@@ -61,6 +61,7 @@ jobs:
         run: flutter pub upgrade --major-versions
 
       - name: Build for ${{ matrix.platform }}
+        shell: bash
         run: |
           if [[ "${{ matrix.platform }}" == "android" ]]; then
             flutter build apk --release
