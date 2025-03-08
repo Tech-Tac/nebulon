@@ -15,7 +15,7 @@ jobs:
     
     strategy:
       matrix:
-        platform: [android, ios, web, windows, linux, macos]
+        platform: [linux, windows, web, android, macos, ios]
         include:
           - platform: ios
             runner: macos-latest
@@ -38,14 +38,14 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          cache: true
+          # cache: true
       - run: flutter --version
 
       - name: Install Linux Dependencies
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build cmake clang pkg-config libgtk-3-dev
+          sudo apt-get install -y ninja-build cmake clang pkg-config libgtk-3-dev libsecret
 
       - name: Install Windows Dependencies
         if: matrix.platform == 'windows'
@@ -67,11 +67,11 @@ jobs:
           elif [[ "${{ matrix.platform }}" == "web" ]]; then
             flutter build web --release --wasm
           elif [[ "${{ matrix.platform }}" == "windows" ]]; then
-            flutter build windows --release
+            flutter build windows
           elif [[ "${{ matrix.platform }}" == "linux" ]]; then
             flutter build linux --release
           elif [[ "${{ matrix.platform }}" == "macos" ]]; then
-            flutter build macos --release
+            flutter build macos
           fi
 
       - name: Upload Build Artifacts
