@@ -10,16 +10,25 @@ on:
 
 jobs:
   build:
-    name: Build App
-    runs-on: ubuntu-latest
+    name: Build Flutter App
+    runs-on: ${{ matrix.runner }}
+    
     strategy:
       matrix:
         platform: [android, ios, web, windows, linux, macos]
-        exclude:
-          - platform: ios  # Exclude iOS for non-macOS builds (macOS required for iOS)
         include:
           - platform: ios
-            runs-on: macos-latest  # Required for iOS builds
+            runner: macos-latest
+          - platform: windows
+            runner: windows-latest
+          - platform: linux
+            runner: ubuntu-latest
+          - platform: android
+            runner: ubuntu-latest
+          - platform: web
+            runner: ubuntu-latest
+          - platform: macos
+            runner: macos-latest
 
     steps:
       - name: Checkout repository
@@ -28,25 +37,39 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0'
+          flutter-version: '3.x'
           cache: true
+
+      - name: Install Linux Dependencies
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build cmake clang pkg-config libgtk-3-dev
+
+      - name: Install Windows Dependencies
+        if: matrix.platform == 'windows'
+        run: |
+          choco install cmake ninja -y
 
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Update Flutter Dependencies
+        run: flutter pub upgrade --major-versions
+
       - name: Build for ${{ matrix.platform }}
         run: |
-          if [ "${{ matrix.platform }}" == "android" ]; then
+          if [[ "${{ matrix.platform }}" == "android" ]]; then
             flutter build apk --release
-          elif [ "${{ matrix.platform }}" == "ios" ]; then
-            flutter build ios --no-codesign
-          elif [ "${{ matrix.platform }}" == "web" ]; then
+          elif [[ "${{ matrix.platform }}" == "ios" ]]; then
+            flutter build ios --release
+          elif [[ "${{ matrix.platform }}" == "web" ]]; then
             flutter build web
-          elif [ "${{ matrix.platform }}" == "windows" ]; then
+          elif [[ "${{ matrix.platform }}" == "windows" ]]; then
             flutter build windows
-          elif [ "${{ matrix.platform }}" == "linux" ]; then
+          elif [[ "${{ matrix.platform }}" == "linux" ]]; then
             flutter build linux
-          elif [ "${{ matrix.platform }}" == "macos" ]; then
+          elif [[ "${{ matrix.platform }}" == "macos" ]]; then
             flutter build macos
           fi
 
