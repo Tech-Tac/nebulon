@@ -45,7 +45,7 @@ jobs:
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build cmake clang pkg-config libgtk-3-dev libsecret
+          sudo apt-get install -y ninja-build cmake clang pkg-config libgtk-3-dev libsecret-1
 
       - name: Install Windows Dependencies
         if: matrix.platform == 'windows'
