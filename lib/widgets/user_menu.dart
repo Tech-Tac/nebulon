@@ -93,71 +93,75 @@ class _UserMenuCardState extends ConsumerState<UserMenuCard>
     final screenPadding = MediaQuery.of(context).padding;
     return Material(
       color: Theme.of(context).colorScheme.surfaceBright,
-      child: Container(
-        height: 56 + screenPadding.bottom,
-        padding:
-            EdgeInsets.all(4) +
-            EdgeInsets.only(
-              bottom: screenPadding.bottom,
-              left: screenPadding.left,
-            ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 4,
-          children: [
-            Expanded(
-              child: InkWell(
-                key: _buttonKey,
-                onTap: _showPopup,
-                borderRadius: BorderRadius.circular(8),
-                child: connectedUser.when(
-                  data:
-                      (user) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 4,
-                          horizontal: 8,
-                        ),
-                        child: Row(
-                          spacing: 8,
-                          children: [
-                            UserAvatar(user: user, size: 40),
-                            if (!widget.collapsed)
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(user.displayName),
-                                  Text(
-                                    "Online",
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodySmall!.copyWith(
-                                      color: Theme.of(context).hintColor,
-                                    ),
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: screenPadding.bottom,
+          left: screenPadding.left,
+        ),
+        child: SizedBox(
+          height: 56,
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 4,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    key: _buttonKey,
+                    onTap: _showPopup,
+                    borderRadius: BorderRadius.circular(8),
+                    child: connectedUser.when(
+                      data:
+                          (user) => Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 8,
+                            ),
+                            child: Row(
+                              spacing: 8,
+                              children: [
+                                UserAvatar(user: user, size: 40),
+                                if (!widget.collapsed)
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(user.displayName),
+                                      Text(
+                                        "Online",
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall!.copyWith(
+                                          color: Theme.of(context).hintColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-                  loading: () {
-                    return Center(child: CircularProgressIndicator());
-                  },
-                  error:
-                      (error, stackTrace) =>
-                          Center(child: Text("Error loading user")),
+                              ],
+                            ),
+                          ),
+                      loading: () {
+                        return Center(child: CircularProgressIndicator());
+                      },
+                      error:
+                          (error, stackTrace) =>
+                              Center(child: Text("Error loading user")),
+                    ),
+                  ),
                 ),
-              ),
+                if (!widget.collapsed)
+                  Row(
+                    spacing: 8,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(onPressed: () {}, icon: Icon(Icons.settings)),
+                    ],
+                  ),
+              ],
             ),
-            if (!widget.collapsed)
-              Row(
-                spacing: 8,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.settings)),
-                ],
-              ),
-          ],
+          ),
         ),
       ),
     );

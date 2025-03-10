@@ -40,35 +40,39 @@ class SidebarMenuState extends ConsumerState<SidebarMenu>
                 child: Column(
                   children: [
                     DragToMoveArea(
-                      child: Container(
-                        padding:
-                            EdgeInsets.all(8) +
-                            EdgeInsets.only(top: screenPadding.top),
-                        height: 48 + screenPadding.top,
-                        alignment: Alignment.center,
+                      child: ColoredBox(
                         color: Theme.of(context).colorScheme.secondaryContainer,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          spacing: 8,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                selectedGuild != null
-                                    ? selectedGuild.name
-                                    : "Direct Messages",
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleMedium!.copyWith(
-                                  color:
-                                      Theme.of(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: screenPadding.top),
+                          child: SizedBox(
+                            height: 48,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                spacing: 8,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      selectedGuild != null
+                                          ? selectedGuild.name
+                                          : "Direct Messages",
+                                      style: Theme.of(
                                         context,
-                                      ).colorScheme.onSecondaryContainer,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                      ).textTheme.titleMedium!.copyWith(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onSecondaryContainer,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -105,7 +109,7 @@ class GuildList extends ConsumerWidget {
 
     final screenPadding = MediaQuery.of(context).padding;
 
-    return Container(
+    return ColoredBox(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
       child: SuperListView.builder(
         padding:

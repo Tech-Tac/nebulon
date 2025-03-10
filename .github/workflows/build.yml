@@ -13,23 +13,23 @@ jobs:
     name: Build Flutter App
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
-    
+
     strategy:
       fail-fast: false
       matrix:
-        platform: [linux, windows, web, android, macos, ios]
+        platform: [linux, windows, android, web, macos, ios]
         include:
-          - platform: ios
-            runner: macos-latest
-          - platform: windows
-            runner: windows-latest
           - platform: linux
             runner: ubuntu-latest
+          - platform: windows
+            runner: windows-latest
           - platform: android
             runner: ubuntu-latest
           - platform: web
             runner: ubuntu-latest
           - platform: macos
+            runner: macos-latest
+          - platform: ios
             runner: macos-latest
 
     steps:
@@ -63,18 +63,18 @@ jobs:
       - name: Build for ${{ matrix.platform }}
         shell: bash
         run: |
-          if [[ "${{ matrix.platform }}" == "android" ]]; then
-            flutter build apk --release
-          elif [[ "${{ matrix.platform }}" == "ios" ]]; then
-            flutter build ios --release --no-codesign
-          elif [[ "${{ matrix.platform }}" == "web" ]]; then
-            flutter build web --release
+          if [[ "${{ matrix.platform }}" == "linux" ]]; then
+            flutter build linux --release
           elif [[ "${{ matrix.platform }}" == "windows" ]]; then
             flutter build windows --release
-          elif [[ "${{ matrix.platform }}" == "linux" ]]; then
-            flutter build linux --release
+          elif [[ "${{ matrix.platform }}" == "android" ]]; then
+            flutter build apk --release
+          elif [[ "${{ matrix.platform }}" == "web" ]]; then
+            flutter build web --release
           elif [[ "${{ matrix.platform }}" == "macos" ]]; then
             flutter build macos --release
+          elif [[ "${{ matrix.platform }}" == "ios" ]]; then
+            flutter build ios --release --no-codesign
           fi
 
       - name: Upload Build Artifacts

@@ -75,12 +75,12 @@ class _ChannelTextFieldState extends ConsumerState<ChannelTextField> {
 
       try {
         final message = await _api.sendMessage(widget.channel.id, text, nonce);
-
         widget.onMessageSent?.call(message);
       } catch (error) {
+        pendingMessage.hasError = true;
         widget.onError?.call(error);
         if (!mounted) return;
-        setState(() => pendingMessage.hasError = true);
+        setState(() {});
         showDialog(
           context: context,
           builder: (context) {
@@ -116,44 +116,46 @@ class _ChannelTextFieldState extends ConsumerState<ChannelTextField> {
   Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).padding;
 
-    return Container(
+    return ColoredBox(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
-      padding: EdgeInsets.only(
-        bottom: screenPadding.bottom,
-        right: screenPadding.right,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: 56),
-              child: TextField(
-                focusNode: _inputFocusNode,
-                controller: _inputController,
-                inputFormatters: [LengthLimitingTextInputFormatter(2000)],
-                textInputAction: TextInputAction.newline,
-                onChanged: (value) => _typing(),
-                autofocus: true,
-                maxLines: 10,
-                minLines: 1,
-                textAlignVertical: TextAlignVertical.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-                decoration: InputDecoration(
-                  hintText: "Message #${widget.channel.displayName}",
-                  hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withAlpha(128),
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: screenPadding.bottom,
+          right: screenPadding.right,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: 56),
+                child: TextField(
+                  focusNode: _inputFocusNode,
+                  controller: _inputController,
+                  inputFormatters: [LengthLimitingTextInputFormatter(2000)],
+                  textInputAction: TextInputAction.newline,
+                  onChanged: (value) => _typing(),
+                  autofocus: true,
+                  maxLines: 10,
+                  minLines: 1,
+                  textAlignVertical: TextAlignVertical.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    hintText: "Message #${widget.channel.displayName}",
+                    hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha(128),
+                    ),
+                    contentPadding: const EdgeInsets.all(14),
+                    border: InputBorder.none,
                   ),
-                  contentPadding: const EdgeInsets.all(14),
-                  border: InputBorder.none,
                 ),
               ),
             ),
-          ),
-          IconButton(onPressed: _sendMessage, icon: const Icon(Icons.send)),
-        ],
+            IconButton(onPressed: _sendMessage, icon: const Icon(Icons.send)),
+          ],
+        ),
       ),
     );
   }

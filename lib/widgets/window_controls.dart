@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nebulon/widgets/window_move_area.dart';
 
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
@@ -22,6 +23,7 @@ class WindowButton extends StatefulWidget {
     this.size,
     this.iconSize,
     this.spacing,
+    this.hoverTransitionDuration,
     this.color,
     this.hoverColor,
     this.iconColor,
@@ -34,6 +36,7 @@ class WindowButton extends StatefulWidget {
   final double? size;
   final double? iconSize;
   final double? spacing;
+  final Duration? hoverTransitionDuration;
   final Color? color;
   final Color? hoverColor;
   final Color? iconColor;
@@ -55,13 +58,15 @@ class _WindowButtonState extends State<WindowButton> {
     // other platforms it's a 24 pixel-wide circle with 4 pixels of (clickable) margin around each.
 
     final bool isCircle = shape == WindowButtonShape.circle;
-    final Color hoverColor =
-        widget.hoverColor ?? Theme.of(context).highlightColor;
-    final Color color = widget.color ?? hoverColor.withAlpha(0);
+    final Duration hoverTransitionDuration =
+        widget.hoverTransitionDuration ?? const Duration(milliseconds: 150);
     final double spacing = widget.spacing ?? (isCircle ? 4 : 0);
     final double width = widget.size ?? (isCircle ? 24 : 48);
     final double? height = (isCircle ? widget.size ?? 24 : null);
     final double iconSize = widget.iconSize ?? 16;
+    final Color hoverColor =
+        widget.hoverColor ?? Theme.of(context).highlightColor;
+    final Color color = widget.color ?? hoverColor.withAlpha(0);
 
     return GestureDetector(
       onTap: widget.onPressed,
@@ -69,7 +74,7 @@ class _WindowButtonState extends State<WindowButton> {
         onEnter: (_) => setState(() => _isHovered = true),
         onExit: (_) => setState(() => _isHovered = false),
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 150),
+          duration: hoverTransitionDuration,
           width: width,
           height: height,
           margin:
@@ -90,35 +95,6 @@ class _WindowButtonState extends State<WindowButton> {
       ),
     );
   }
-}
-
-class WindowCloseButton extends StatelessWidget {
-  const WindowCloseButton({super.key});
-  @override
-  Widget build(_) => WindowButton(
-    onPressed: windowManager.close,
-    icon: Icon(Icons.close),
-    hoverColor: Color(0xFFDD0000),
-  );
-}
-
-class WindowMaximizeButton extends StatelessWidget {
-  const WindowMaximizeButton({super.key, this.maximized = false});
-  final bool maximized;
-  @override
-  Widget build(_) => WindowButton(
-    icon: Icon(maximized ? Icons.square_rounded : Icons.crop_square_rounded),
-    onPressed: maximized ? windowManager.unmaximize : windowManager.maximize,
-  );
-}
-
-class WindowMinimizeButton extends StatelessWidget {
-  const WindowMinimizeButton({super.key});
-  @override
-  Widget build(_) => WindowButton(
-    onPressed: windowManager.minimize,
-    icon: Icon(Icons.horizontal_rule),
-  );
 }
 
 class WindowControls extends StatefulWidget {
@@ -170,7 +146,6 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      behavior: HitTestBehavior.deferToChild,
       onPanStart: (_) {},
       child: AnimatedOpacity(
         duration: Duration(milliseconds: 100),
@@ -180,15 +155,134 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            WindowMinimizeButton(),
+            WindowButton(
+              onPressed: windowManager.minimize,
+              icon: Icon(Icons.horizontal_rule),
+            ),
+
             if (_isFullscreen)
               WindowButton(
                 onPressed: () => windowManager.setFullScreen(false),
                 icon: Icon(Icons.fullscreen_exit),
               )
             else
-              WindowMaximizeButton(maximized: _isMaximized),
-            WindowCloseButton(),
+              WindowButton(
+                icon: Icon(
+                  _isMaximized
+                      ? Icons.square_rounded
+                      : Icons.crop_square_rounded,
+                ),
+                onPressed:
+                    _isMaximized
+                        ? windowManager.unmaximize
+                        : windowManager.maximize,
+              ),
+
+            WindowButton(
+              onPressed: windowManager.close,
+              icon: Icon(Icons.close),
+              hoverColor: Color(0xFFDD0000),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+}
+
+class MacWindowControls extends StatefulWidget {
+  const MacWindowControls({super.key});
+
+  @override
+  State<MacWindowControls> createState() => _MacWindowControlsState();
+}
+
+class _MacWindowControlsState extends State<MacWindowControls>
+    with WindowListener {
+  bool _isFocused = true;
+  bool _isFullscreen = false;
+  bool _isMaximized = false;
+
+  @override
+  void initState() {
+    windowManager.addListener(this);
+    _updateControls();
+    super.initState();
+  }
+
+  void _updateControls() async {
+    final windowState = await Future.wait([
+      windowManager.isFocused(),
+      windowManager.isFullScreen(),
+      windowManager.isMaximized(),
+    ]);
+    if (!mounted) return;
+    setState(() {
+      _isFocused = windowState[0];
+      _isFullscreen = windowState[1];
+      _isMaximized = windowState[2];
+    });
+  }
+
+  @override
+  void onWindowFocus() => setState(() => _isFocused = true);
+  @override
+  void onWindowBlur() => setState(() => _isFocused = false);
+  @override
+  void onWindowEnterFullScreen() => setState(() => _isFullscreen = true);
+  @override
+  void onWindowLeaveFullScreen() => setState(() => _isFullscreen = false);
+  @override
+  void onWindowMaximize() => setState(() => _isMaximized = true);
+  @override
+  void onWindowUnmaximize() => setState(() => _isMaximized = false);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onPanStart: (_) {},
+      child: AnimatedOpacity(
+        duration: Duration(milliseconds: 100),
+        curve: Curves.linear,
+        opacity: _isFocused ? 1 : 0.5,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            WindowButton(
+              onPressed: windowManager.minimize,
+              icon: Icon(Icons.horizontal_rule),
+            ),
+
+            if (_isFullscreen)
+              WindowButton(
+                onPressed: () => windowManager.setFullScreen(false),
+                icon: Icon(Icons.fullscreen_exit),
+              )
+            else
+              WindowButton(
+                icon: Icon(
+                  _isMaximized
+                      ? Icons.square_rounded
+                      : Icons.crop_square_rounded,
+                ),
+                onPressed:
+                    _isMaximized
+                        ? windowManager.unmaximize
+                        : windowManager.maximize,
+              ),
+
+            WindowButton(
+              onPressed: windowManager.close,
+              icon: Icon(Icons.close),
+              hoverColor: Color(0xFFDD0000),
+            ),
           ],
         ),
       ),
@@ -225,20 +319,21 @@ class TitleBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).padding;
 
-    return SizedBox(
-      height: height,
+    return WindowMoveArea(
       child: ColoredBox(
         color: color ?? Theme.of(context).colorScheme.surfaceContainerHigh,
         child: Padding(
           padding: EdgeInsets.only(top: screenPadding.top),
-          child: Row(
-            children: [
-              if (UniversalPlatform.isMacOS) WindowControls(),
-              if (startActions != null) ...startActions!,
+          child: SizedBox(
+            height: height,
+            child: Row(
+              children: [
+                if (showWindowControls && UniversalPlatform.isMacOS)
+                  WindowControls(),
 
-              // main draggable title area
-              Expanded(
-                child: DragToMoveArea(
+                if (startActions != null) ...startActions!,
+
+                Expanded(
                   child: SizedBox.expand(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -261,15 +356,15 @@ class TitleBar extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
 
-              if (endActions != null) ...endActions!,
+                if (endActions != null) ...endActions!,
 
-              if (showWindowControls &&
-                  UniversalPlatform.isDesktop &&
-                  !UniversalPlatform.isMacOS)
-                WindowControls(),
-            ],
+                if (showWindowControls &&
+                    !UniversalPlatform.isMacOS &&
+                    UniversalPlatform.isDesktop)
+                  WindowControls(),
+              ],
+            ),
           ),
         ),
       ),

@@ -11,7 +11,7 @@ class DispatchEvent {
 
   factory DispatchEvent.fromPayload(Map<String, dynamic> payload) {
     if (payload["op"] != 0) {
-      throw Exception("Payload wasn't a dispatch event (OP-code 0)");
+      throw Exception("Payload wasn't a dispatch event (expected OP-code 0)");
     }
     return DispatchEvent(payload["t"], payload["d"]);
   }

@@ -135,12 +135,12 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
 
     setState(() {
       _hasError = false;
+      channel.isLoading = true;
     });
 
     List<MessageModel> data = [];
 
     try {
-      if (mounted) setState(() => channel.isLoading = true);
       data = await channel.fetchMessages(count: count) ?? [];
     } catch (error) {
       log(error.toString());
