@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nebulon/widgets/window_move_area.dart';
 
@@ -61,11 +64,11 @@ class _WindowButtonState extends State<WindowButton> {
     final Duration hoverTransitionDuration =
         widget.hoverTransitionDuration ?? const Duration(milliseconds: 150);
     final double spacing = widget.spacing ?? (isCircle ? 4 : 0);
-    final double width = widget.size ?? (isCircle ? 24 : 48);
+    final double width = widget.size ?? (isCircle ? 20 : 48);
     final double? height = (isCircle ? widget.size ?? 24 : null);
-    final double iconSize = widget.iconSize ?? 16;
+    final double iconSize = min(widget.iconSize ?? 16, width);
     final Color hoverColor =
-        widget.hoverColor ?? Theme.of(context).highlightColor;
+        widget.hoverColor ?? widget.color ?? Theme.of(context).highlightColor;
     final Color color = widget.color ?? hoverColor.withAlpha(0);
 
     return GestureDetector(
@@ -87,7 +90,7 @@ class _WindowButtonState extends State<WindowButton> {
           child: IconTheme(
             data: IconTheme.of(context).copyWith(
               size: iconSize,
-              color: _isHovered ? widget.iconColor : widget.iconHoverColor,
+              color: _isHovered ? widget.iconHoverColor : widget.iconColor,
             ),
             child: widget.icon,
           ),
@@ -143,148 +146,105 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
   @override
   void onWindowUnmaximize() => setState(() => _isMaximized = false);
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanStart: (_) {},
-      child: AnimatedOpacity(
-        duration: Duration(milliseconds: 100),
-        curve: Curves.linear,
-        opacity: _isFocused ? 1 : 0.5,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            WindowButton(
-              onPressed: windowManager.minimize,
-              icon: Icon(Icons.horizontal_rule),
-            ),
-
-            if (_isFullscreen)
-              WindowButton(
-                onPressed: () => windowManager.setFullScreen(false),
-                icon: Icon(Icons.fullscreen_exit),
-              )
-            else
-              WindowButton(
-                icon: Icon(
-                  _isMaximized
-                      ? Icons.square_rounded
-                      : Icons.crop_square_rounded,
-                ),
-                onPressed:
-                    _isMaximized
-                        ? windowManager.unmaximize
-                        : windowManager.maximize,
-              ),
-
-            WindowButton(
-              onPressed: windowManager.close,
-              icon: Icon(Icons.close),
-              hoverColor: Color(0xFFDD0000),
-            ),
-          ],
-        ),
+  List<Widget> _buildNormalButtons(BuildContext context) {
+    return [
+      WindowButton(
+        onPressed: windowManager.minimize,
+        icon: Icon(Icons.horizontal_rule),
       ),
-    );
+
+      if (_isFullscreen)
+        WindowButton(
+          onPressed: () => windowManager.setFullScreen(false),
+          icon: Icon(Icons.fullscreen_exit),
+        )
+      else
+        WindowButton(
+          icon: Icon(
+            _isMaximized ? Icons.square_rounded : Icons.crop_square_rounded,
+          ),
+          onPressed:
+              _isMaximized ? windowManager.unmaximize : windowManager.maximize,
+        ),
+
+      WindowButton(
+        onPressed: windowManager.close,
+        icon: Icon(Icons.close),
+        hoverColor: Color(0xFFDD0000),
+      ),
+    ];
   }
 
-  @override
-  void dispose() {
-    windowManager.removeListener(this);
-    super.dispose();
+  List<Widget> _buildMacOSButtons(BuildContext context) {
+    final Color nonFocusColor = Colors.grey;
+    final closeColor = Colors.red;
+    final minColor = Colors.yellow;
+    final maxColor = Colors.green;
+
+    final Color iconColor = Colors.transparent;
+    final Color iconHoverColor = Colors.black;
+
+    final double size = 12;
+    final double spacing = 4;
+
+    return [
+      WindowButton(
+        onPressed: windowManager.close,
+        icon: Icon(Icons.close),
+        iconHoverColor: iconHoverColor,
+        color: _isFocused ? closeColor : nonFocusColor,
+        hoverColor: closeColor,
+        iconColor: iconColor,
+        size: size,
+        spacing: spacing,
+      ),
+
+      WindowButton(
+        onPressed: windowManager.minimize,
+
+        icon: Icon(Icons.horizontal_rule),
+        iconHoverColor: iconHoverColor,
+        color: _isFocused ? minColor : nonFocusColor,
+        hoverColor: minColor,
+        iconColor: iconColor,
+        size: size,
+        spacing: spacing,
+      ),
+
+      WindowButton(
+        icon: Icon(
+          _isFullscreen || _isMaximized
+              ? Icons.close_fullscreen
+              : Icons.fullscreen,
+        ),
+        onPressed:
+            _isFullscreen
+                ? () => windowManager.setFullScreen(false)
+                : _isMaximized
+                ? windowManager.unmaximize
+                : windowManager.maximize,
+
+        iconHoverColor: iconHoverColor,
+        color: _isFocused ? maxColor : nonFocusColor,
+        hoverColor: maxColor,
+        iconColor: iconColor,
+        size: size,
+        spacing: spacing,
+      ),
+    ];
   }
-}
-
-class MacWindowControls extends StatefulWidget {
-  const MacWindowControls({super.key});
-
-  @override
-  State<MacWindowControls> createState() => _MacWindowControlsState();
-}
-
-class _MacWindowControlsState extends State<MacWindowControls>
-    with WindowListener {
-  bool _isFocused = true;
-  bool _isFullscreen = false;
-  bool _isMaximized = false;
-
-  @override
-  void initState() {
-    windowManager.addListener(this);
-    _updateControls();
-    super.initState();
-  }
-
-  void _updateControls() async {
-    final windowState = await Future.wait([
-      windowManager.isFocused(),
-      windowManager.isFullScreen(),
-      windowManager.isMaximized(),
-    ]);
-    if (!mounted) return;
-    setState(() {
-      _isFocused = windowState[0];
-      _isFullscreen = windowState[1];
-      _isMaximized = windowState[2];
-    });
-  }
-
-  @override
-  void onWindowFocus() => setState(() => _isFocused = true);
-  @override
-  void onWindowBlur() => setState(() => _isFocused = false);
-  @override
-  void onWindowEnterFullScreen() => setState(() => _isFullscreen = true);
-  @override
-  void onWindowLeaveFullScreen() => setState(() => _isFullscreen = false);
-  @override
-  void onWindowMaximize() => setState(() => _isMaximized = true);
-  @override
-  void onWindowUnmaximize() => setState(() => _isMaximized = false);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanStart: (_) {},
-      child: AnimatedOpacity(
-        duration: Duration(milliseconds: 100),
-        curve: Curves.linear,
-        opacity: _isFocused ? 1 : 0.5,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            WindowButton(
-              onPressed: windowManager.minimize,
-              icon: Icon(Icons.horizontal_rule),
-            ),
-
-            if (_isFullscreen)
-              WindowButton(
-                onPressed: () => windowManager.setFullScreen(false),
-                icon: Icon(Icons.fullscreen_exit),
-              )
-            else
-              WindowButton(
-                icon: Icon(
-                  _isMaximized
-                      ? Icons.square_rounded
-                      : Icons.crop_square_rounded,
-                ),
-                onPressed:
-                    _isMaximized
-                        ? windowManager.unmaximize
-                        : windowManager.maximize,
-              ),
-
-            WindowButton(
-              onPressed: windowManager.close,
-              icon: Icon(Icons.close),
-              hoverColor: Color(0xFFDD0000),
-            ),
-          ],
-        ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children:
+            UniversalPlatform.isMacOS
+                ? _buildMacOSButtons(context)
+                : _buildNormalButtons(context),
       ),
     );
   }

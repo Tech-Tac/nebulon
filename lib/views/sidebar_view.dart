@@ -7,7 +7,9 @@ import 'package:nebulon/helpers/cdn_image.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nebulon/widgets/user_menu.dart';
+import 'package:nebulon/widgets/window_controls.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
 
 class SidebarMenu extends ConsumerStatefulWidget {
@@ -111,55 +113,67 @@ class GuildList extends ConsumerWidget {
 
     return ColoredBox(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
-      child: SuperListView.builder(
-        padding:
-            const EdgeInsets.symmetric(vertical: 8) +
-            EdgeInsets.only(left: screenPadding.left, top: screenPadding.top),
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: screenPadding.left,
+          top: screenPadding.top,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (UniversalPlatform.isMacOS)
+              SizedBox(width: 60, height: 32, child: WindowControls()),
+            Expanded(
+              child: SuperListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: guilds.length + 1,
+                itemBuilder: (itemContext, index) {
+                  if (index == 0) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: SidebarItem(
+                            item: const Icon(Icons.chat_bubble),
+                            text: "Direct Messages",
+                            isSelected: selectedGuild == null,
+                            onTap: () => selectedGuildNotifier.set(null),
+                          ),
+                        ),
 
-        itemCount: guilds.length + 1,
-        itemBuilder: (itemContext, index) {
-          if (index == 0) {
-            return Column(
-              spacing: 4,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: SidebarItem(
-                    item: const Icon(Icons.chat_bubble),
-                    text: "Direct Messages",
-                    isSelected: selectedGuild == null,
-                    onTap: () => selectedGuildNotifier.set(null),
-                  ),
-                ),
-
-                Divider(
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(64),
-                  thickness: 0.5,
-                  indent: 16,
-                  endIndent: 16,
-                ),
-              ],
-            );
-          }
-          final guild = guilds[index - 1];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: SidebarItem(
-              image:
-                  guild.iconHash != null
-                      ? cdnImage(
-                        context,
-                        "icons/${guild.id}/${guild.iconHash!}.png",
-                        size: 48,
-                      )
-                      : null,
-              text: guild.name,
-              onTap: () => selectedGuildNotifier.set(guild),
-              isSelected: selectedGuild == guild,
-              hasDot: true,
+                        Divider(
+                          color: Theme.of(context).dividerColor.withAlpha(64),
+                          thickness: 1,
+                          indent: 16,
+                          endIndent: 16,
+                          height: 24,
+                        ),
+                      ],
+                    );
+                  }
+                  final guild = guilds[index - 1];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: SidebarItem(
+                      image:
+                          guild.iconHash != null
+                              ? cdnImage(
+                                context,
+                                "icons/${guild.id}/${guild.iconHash!}.png",
+                                size: 48,
+                              )
+                              : null,
+                      text: guild.name,
+                      onTap: () => selectedGuildNotifier.set(guild),
+                      isSelected: selectedGuild == guild,
+                      hasDot: true,
+                    ),
+                  );
+                },
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }

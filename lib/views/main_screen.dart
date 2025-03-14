@@ -6,6 +6,7 @@ import 'package:nebulon/views/sidebar_view.dart';
 import 'package:nebulon/widgets/resizable_sidebar.dart';
 import 'package:nebulon/widgets/window_controls.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -93,7 +94,9 @@ class ViewBody extends ConsumerWidget {
         TitleBar(
           icon:
               selectedChannel == null
-                  ? const Icon(Icons.discord)
+                  ? const Icon(
+                    Icons.discord,
+                  ) // this is a placeholder until I design a logo
                   : Icon(getChannelSymbol(selectedChannel.type)),
           title: Text(title ?? "Nebulon"),
           startActions: [
@@ -103,6 +106,8 @@ class ViewBody extends ConsumerWidget {
                 icon: Icon(Icons.menu),
               ),
           ],
+          // the title-bar is not left aligned, we will put the controls on the left sidebar instead
+          showWindowControls: !UniversalPlatform.isMacOS,
         ),
         Expanded(child: MainChannelView()),
       ],

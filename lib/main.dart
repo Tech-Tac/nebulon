@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nebulon/providers/providers.dart';
 import 'package:nebulon/services/session_manager.dart';
-import 'package:nebulon/views/home_screen.dart';
+import 'package:nebulon/views/main_screen.dart';
 import 'package:nebulon/views/login_screen.dart';
 import 'package:nebulon/views/splash_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
