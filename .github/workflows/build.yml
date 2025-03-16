@@ -85,6 +85,6 @@ jobs:
             build/app/outputs/flutter-apk/*.apk
             build/ios/iphoneos/*.app
             build/web
-            build/windows/runner/Release
+            build/windows/x64/runner/Release
             build/linux/x64/release/bundle
             build/macos/Build/Products/Release
