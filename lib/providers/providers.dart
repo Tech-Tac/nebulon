@@ -87,3 +87,5 @@ final sidebarCollapsedProvider = StateProvider<bool>((ref) => false);
 final menuCollapsedProvider = Provider.autoDispose(
   (ref) => !ref.watch(hasDrawerProvider) && ref.watch(sidebarCollapsedProvider),
 );
+
+final privateChannelsProvider = StateProvider<List<ChannelModel>>((ref) => []);

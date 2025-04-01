@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nebulon/providers/providers.dart';
@@ -50,7 +48,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'Nebulon', // does this even do anything?
+      title: 'Nebulon',
       // TODO: make theme customizable by the user
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -78,34 +76,25 @@ class MyApp extends ConsumerWidget {
         "/login": (context) => const LoginScreen(),
       },
       home: FutureBuilder(
-        // this is even barely a future, more like next millisecond smh
-        future: SessionManager.getLastUser(),
+        future:
+            SessionManager.currentSessionToken != null
+                ? Future(() => SessionManager.currentSessionToken)
+                : SessionManager.loginLastSession(),
         builder: (context, snapshot) {
-          // this is a mess
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              // this is quite useless, doesn't even show up for a split second
               return const SplashScreen();
             case ConnectionState.done:
               if (snapshot.hasData && snapshot.data != null) {
-                // re-initializing the service on rebuild causes connections to reload,
-                // so we make sure it is not initialized yet (loading is the default state).
-                ref
-                    .read(apiServiceProvider)
-                    .when(
-                      data: (_) {},
-                      error: (err, _) => log(err.toString()),
-                      loading: () {
-                        SessionManager.getUserSession(snapshot.data!).then((
-                          token,
-                        ) {
-                          // actual login vvv
-                          ref
-                              .read(apiServiceProvider.notifier)
-                              .initialize(token!);
-                        });
-                      },
-                    );
+                // delay this a little to not change state during widget lifecycle
+                if (ref.read(apiServiceProvider).isLoading) {
+                  Future(
+                    () => ref
+                        .read(apiServiceProvider.notifier)
+                        .initialize(snapshot.data!),
+                  );
+                }
+
                 return const HomeScreen();
               } else {
                 return const LoginScreen();

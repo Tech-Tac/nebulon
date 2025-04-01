@@ -187,7 +187,7 @@ class UserMenu extends ConsumerWidget {
                 Text("Online"),
                 ElevatedButton(
                   onPressed: () {
-                    SessionManager.removeUser(data.id.toString());
+                    SessionManager.logout();
                     Navigator.of(context).pushReplacementNamed("/login");
                   },
                   child: Text("Logout"),

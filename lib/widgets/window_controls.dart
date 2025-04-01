@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nebulon/widgets/window_move_area.dart';
 
@@ -64,7 +63,7 @@ class _WindowButtonState extends State<WindowButton> {
     final Duration hoverTransitionDuration =
         widget.hoverTransitionDuration ?? const Duration(milliseconds: 150);
     final double spacing = widget.spacing ?? (isCircle ? 4 : 0);
-    final double width = widget.size ?? (isCircle ? 20 : 48);
+    final double width = widget.size ?? (isCircle ? 20 : 46);
     final double? height = (isCircle ? widget.size ?? 24 : null);
     final double iconSize = min(widget.iconSize ?? 16, width);
     final Color hoverColor =
@@ -151,6 +150,7 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
       WindowButton(
         onPressed: windowManager.minimize,
         icon: Icon(Icons.horizontal_rule),
+        size: UniversalPlatform.isWindows ? 48 : null,
       ),
 
       if (_isFullscreen)

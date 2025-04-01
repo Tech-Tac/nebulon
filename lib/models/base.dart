@@ -71,7 +71,8 @@ abstract class CacheableResource extends Resource {
   void merge(covariant CacheableResource other);
 }
 
-/// A generic registry for any Cacheable type.
+// TODO: deprecate this in favor of GlobalCache
+/// A generic registry for a Cacheable type.
 class CacheRegistry<T extends CacheableResource> {
   final Map<Snowflake, T> _cache = {};
 
@@ -95,5 +96,23 @@ class CacheRegistry<T extends CacheableResource> {
 
   T? getById(Snowflake id) {
     return _cache[id];
+  }
+}
+
+// TODO: use Globalcache for all cacheable resources
+class GlobalCache {
+  static final Map<Type, Map<Snowflake, Resource>> _cache = {};
+
+  static void insert<T extends Resource>(T resource) {
+    _cache[T] ??= {};
+    _cache[T]![resource.id] = resource;
+  }
+
+  static T? getById<T extends Resource>(Snowflake id) {
+    return _cache[T]?[id] as T?;
+  }
+
+  static void clearAll() {
+    _cache.clear();
   }
 }

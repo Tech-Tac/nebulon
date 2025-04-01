@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:nebulon/models/base.dart';
 import 'package:nebulon/models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:nebulon/models/user.dart';
 import 'package:nebulon/services/api_service.dart';
 
 enum ChannelType {
@@ -58,7 +59,9 @@ class ChannelModel extends CacheableResource {
     required super.id,
     this.guildId,
     this.name,
+    this.iconHash,
     required this.type,
+    this.recipients,
     this.parentId,
     this.position,
     this.messages,
@@ -70,17 +73,27 @@ class ChannelModel extends CacheableResource {
   }
   final int? guildId;
   String? name;
+  String? iconHash;
   int? parentId;
   ChannelModel? get parent => parentId != null ? getById(parentId!) : null;
   int? position = 0;
   ChannelType type = ChannelType.text;
+  List<UserModel>? recipients = [];
 
   final ApiService? _service;
   List<MessageModel>? messages;
   bool fullyLoaded = false;
   bool isLoading = false;
 
-  String get displayName => name ?? "$id";
+  String get displayName =>
+      name ?? recipients?.map((e) => e.displayName).join(", ") ?? "$id";
+
+  String? get iconPath =>
+      recipients?.length == 1
+          ? recipients!.first.avatarPath
+          : iconHash != null
+          ? "/channels/$id/icons/$iconHash.png"
+          : null;
 
   StreamSubscription? _listener;
 
@@ -135,6 +148,12 @@ class ChannelModel extends CacheableResource {
       id: Snowflake(json["id"]),
       guildId: int.tryParse(json["guild_id"] ?? ""),
       type: ChannelType.getByValue(json["type"]),
+      recipients:
+          json["recipients"] != null
+              ? (json["recipients"] as List)
+                  .map((userJson) => UserModel.fromJson(userJson))
+                  .toList()
+              : [],
       parentId: int.tryParse(json["parent_id"] ?? ""),
       position: json["position"],
       name: json["name"],

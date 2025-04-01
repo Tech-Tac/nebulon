@@ -220,11 +220,7 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       backgroundColor: Colors.transparent,
-      foregroundImage: cdnImage(
-        context,
-        "avatars/${user.id}/${user.avatarHash}.png",
-        size: size,
-      ),
+      foregroundImage: cdnImage(context, user.avatarPath, size: size),
       radius: size / 2,
     );
   }

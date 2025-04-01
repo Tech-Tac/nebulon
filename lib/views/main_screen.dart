@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nebulon/helpers/cdn_image.dart';
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/providers/providers.dart';
 import 'package:nebulon/views/channel/channel_view.dart';
@@ -92,12 +93,25 @@ class ViewBody extends ConsumerWidget {
     return Column(
       children: [
         TitleBar(
-          icon:
-              selectedChannel == null
-                  ? const Icon(
-                    Icons.discord,
-                  ) // this is a placeholder until I design a logo
-                  : Icon(getChannelSymbol(selectedChannel.type)),
+          icon: SizedBox(
+            width: 32,
+            height: 32,
+            child:
+                selectedChannel == null
+                    ? const Icon(
+                      Icons.discord,
+                    ) // this is a placeholder until I design a logo
+                    : selectedChannel.iconPath != null
+                    ? CircleAvatar(
+                      backgroundImage: cdnImage(
+                        context,
+                        selectedChannel.iconPath!,
+                        size: 32,
+                      ),
+                      radius: 16,
+                    )
+                    : Icon(getChannelSymbol(selectedChannel.type)),
+          ),
           title: Text(title ?? "Nebulon"),
           startActions: [
             if (hasDrawer)
@@ -109,7 +123,7 @@ class ViewBody extends ConsumerWidget {
           // the title-bar is not left aligned, we will put the controls on the left sidebar instead
           showWindowControls: !UniversalPlatform.isMacOS,
         ),
-        Expanded(child: MainChannelView()),
+        Expanded(child: MainChannelView(key: ValueKey("main-channel-view"))),
       ],
     );
   }

@@ -179,14 +179,42 @@ class GuildList extends ConsumerWidget {
   }
 }
 
-class DMList extends StatelessWidget {
+class DMList extends ConsumerWidget {
   const DMList({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ListView(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final channels = ref.watch(privateChannelsProvider);
+    return SuperListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      children: [],
+      itemCount: channels.length,
+      itemBuilder: (context, index) {
+        final channel = channels[index];
+        return ListTile(
+          title: Text(channel.displayName, overflow: TextOverflow.ellipsis),
+          minVerticalPadding: 16,
+          minLeadingWidth: 48,
+          selected: ref.watch(selectedChannelProvider) == channel,
+          selectedTileColor:
+              Theme.of(context).colorScheme.surfaceContainerHighest,
+          leading: CircleAvatar(
+            backgroundImage:
+                channel.iconPath != null
+                    ? cdnImage(context, channel.iconPath!, size: 48)
+                    : null,
+            child:
+                channel.recipients?.length == 1 || channel.iconHash != null
+                    ? null
+                    : Icon(Icons.group_rounded, size: 24),
+          ),
+          onTap: () {
+            ref.read(selectedChannelProvider.notifier).set(channel);
+            Scaffold.of(context).closeDrawer();
+          },
+          dense: true,
+          horizontalTitleGap: 8,
+        );
+      },
     );
   }
 }

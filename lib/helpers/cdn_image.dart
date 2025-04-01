@@ -1,7 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-ImageProvider cdnImage(BuildContext context, String path, {double? size, bool cache = true}) {
+ImageProvider cdnImage(
+  BuildContext context,
+  String path, {
+  double? size,
+  bool cache = true,
+}) {
   int? finalSize;
   if (size != null) {
     final double scale = MediaQuery.of(context).devicePixelRatio;
@@ -33,7 +38,14 @@ ImageProvider cdnImage(BuildContext context, String path, {double? size, bool ca
     finalSize = closest;
   }
 
-  final String url = "https://cdn.discordapp.com/$path${finalSize != null ? "?size=$finalSize" : ""}";
+  final String url =
+      "https://cdn.discordapp.com/$path${finalSize != null ? "?size=$finalSize" : ""}";
 
-  return cache ? CachedNetworkImageProvider(url, maxWidth: finalSize, maxHeight: finalSize) : NetworkImage(url);
+  return cache
+      ? CachedNetworkImageProvider(
+        url,
+        maxWidth: finalSize,
+        maxHeight: finalSize,
+      )
+      : NetworkImage(url);
 }

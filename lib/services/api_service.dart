@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:nebulon/models/base.dart';
+import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/models/guild.dart';
 
 import 'package:nebulon/models/message.dart';
@@ -129,6 +130,10 @@ class ApiService {
         _ref.read(guildsProvider.notifier).state =
             (data["guilds"] as List)
                 .map((guild) => GuildModel.fromJson(guild, service: this))
+                .toList();
+        _ref.read(privateChannelsProvider.notifier).state =
+            (data["private_channels"] as List)
+                .map((channel) => ChannelModel.fromJson(channel, service: this))
                 .toList();
       case "MESSAGE_CREATE":
         _messageEventController.add(
