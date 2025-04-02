@@ -146,7 +146,8 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
       log(error.toString());
       if (mounted) setState(() => _hasError = true);
     } finally {
-      if (mounted) setState(() => channel.isLoading = false);
+      channel.isLoading = false;
+      if (mounted) setState(() {});
     }
 
     return data;
@@ -261,6 +262,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
           onMessageSubmit: (message) {
             setState(() => _pendingMessages.insert(0, message));
           },
+          onError: (_) => setState(() {}),
         ),
       ],
     );
