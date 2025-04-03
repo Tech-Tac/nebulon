@@ -108,8 +108,10 @@ class ChannelModel extends CacheableResource {
         event.messageId >= messages!.last.id) {
       switch (event.type) {
         case MessageEventType.update:
-          messages![messages!.indexWhere((m) => m.id == event.messageId)] =
-              event.message!;
+          final index = messages!.indexWhere((m) => m.id == event.messageId);
+          if (index != -1) {
+            messages![index] = event.message!;
+          }
           break;
         case MessageEventType.delete:
           messages?.removeAt(

@@ -57,6 +57,7 @@ class MyApp extends ConsumerWidget {
           dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
         ),
         useMaterial3: true,
+        platform: TargetPlatform.linux,
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -86,8 +87,8 @@ class MyApp extends ConsumerWidget {
               return const SplashScreen();
             case ConnectionState.done:
               if (snapshot.hasData && snapshot.data != null) {
-                // delay this a little to not change state during widget lifecycle
                 if (ref.read(apiServiceProvider).isLoading) {
+                  // delay this a little to not change state during widget lifecycle
                   Future(
                     () => ref
                         .read(apiServiceProvider.notifier)
