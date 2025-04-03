@@ -287,41 +287,58 @@ class TitleBar extends StatelessWidget {
           child: SizedBox(
             height: height,
             child: Row(
+              spacing: 4,
               children: [
-                if (showWindowControls && UniversalPlatform.isMacOS)
+                if (UniversalPlatform.isMacOS && showWindowControls)
                   WindowControls(),
 
-                if (startActions != null) ...startActions!,
+                if (startActions != null)
+                  ...startActions!.map(
+                    (action) => Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: action,
+                    ),
+                  ),
 
                 Expanded(
-                  child: SizedBox.expand(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8,
-                        children: [
-                          if (icon != null) icon!,
-                          if (title != null)
-                            Expanded(
-                              child: DefaultTextStyle(
-                                style: Theme.of(context).textTheme.titleMedium!,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                child: title!,
-                              ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 8,
+                      children: [
+                        if (icon != null)
+                          IconTheme(
+                            data: Theme.of(
+                              context,
+                            ).iconTheme.copyWith(size: 24),
+                            child: icon!,
+                          ),
+                        if (title != null)
+                          Expanded(
+                            child: DefaultTextStyle(
+                              style: Theme.of(context).textTheme.titleMedium!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              child: title!,
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
 
-                if (endActions != null) ...endActions!,
+                if (endActions != null)
+                  ...endActions!.map(
+                    (action) => Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: action,
+                    ),
+                  ),
 
-                if (showWindowControls &&
-                    !UniversalPlatform.isMacOS &&
-                    UniversalPlatform.isDesktop)
+                if (UniversalPlatform.isDesktop &&
+                    showWindowControls &&
+                    !UniversalPlatform.isMacOS)
                   WindowControls(),
               ],
             ),

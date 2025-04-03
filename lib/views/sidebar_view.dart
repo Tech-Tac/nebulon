@@ -312,11 +312,13 @@ class ChannelCategory extends StatelessWidget {
         key: PageStorageKey("${id}_channel_category"),
         title: Text(title),
         initiallyExpanded: true,
+        childrenPadding: EdgeInsets.zero,
         dense: true,
         shape: const Border(),
         children: [
           SuperListView.builder(
             key: PageStorageKey("Category list $id"),
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: channels.length,

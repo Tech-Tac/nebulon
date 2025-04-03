@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [linux, windows, android, web, macos, ios]
+        platform: [linux, windows, android, android-debug, web, macos, ios]
         include:
           - platform: linux
             runner: ubuntu-latest
@@ -69,6 +69,8 @@ jobs:
             flutter build windows --release
           elif [[ "${{ matrix.platform }}" == "android" ]]; then
             flutter build apk --release
+          elif [[ "${{ matrix.platform }}" == "android-debug" ]]; then
+            flutter build apk --debug --target-platform android-arm64
           elif [[ "${{ matrix.platform }}" == "web" ]]; then
             flutter build web --release
           elif [[ "${{ matrix.platform }}" == "macos" ]]; then
