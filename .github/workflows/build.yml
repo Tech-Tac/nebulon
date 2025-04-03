@@ -69,7 +69,6 @@ jobs:
             flutter build windows --release
           elif [[ "${{ matrix.platform }}" == "android" ]]; then
             flutter build apk --release
-            flutter build apk --debug
           elif [[ "${{ matrix.platform }}" == "web" ]]; then
             flutter build web --release
           elif [[ "${{ matrix.platform }}" == "macos" ]]; then
