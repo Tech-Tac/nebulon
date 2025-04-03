@@ -25,6 +25,8 @@ jobs:
             runner: windows-latest
           - platform: android
             runner: ubuntu-latest
+          - platform: android-debug
+            runner: ubuntu-latest
           - platform: web
             runner: ubuntu-latest
           - platform: macos
