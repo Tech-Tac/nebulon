@@ -87,7 +87,7 @@ jobs:
         with:
           name: build-${{ matrix.platform }}
           path: |
-            ${{ matrix.platform == 'android' && 'build/app/outputs/flutter-apk/release.apk' || '' }}
+            ${{ matrix.platform == 'android' && 'build/app/outputs/flutter-apk/app-release.apk' || '' }}
             ${{ matrix.platform == 'android-debug' && 'build/app/outputs/flutter-apk/app-debug.apk' || '' }}
             ${{ matrix.platform == 'ios' && 'build/ios/iphoneos/Runner.app' || '' }}
             ${{ matrix.platform == 'web' && 'build/web' || '' }}
