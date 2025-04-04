@@ -63,7 +63,7 @@ class _WindowButtonState extends State<WindowButton> {
     final Duration hoverTransitionDuration =
         widget.hoverTransitionDuration ?? const Duration(milliseconds: 150);
     final double spacing = widget.spacing ?? (isCircle ? 4 : 0);
-    final double width = widget.size ?? (isCircle ? 20 : 46);
+    final double width = widget.size ?? (isCircle ? 24 : 46);
     final double? height = (isCircle ? widget.size ?? 24 : null);
     final double iconSize = min(widget.iconSize ?? 16, width);
     final Color hoverColor =
@@ -292,49 +292,42 @@ class TitleBar extends StatelessWidget {
                 if (UniversalPlatform.isMacOS && showWindowControls)
                   WindowControls(),
 
-                if (startActions != null)
-                  ...startActions!.map(
-                    (action) => Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: action,
-                    ),
-                  ),
+                SizedBox(),
+
+                if (startActions != null) ...startActions!,
 
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 8,
-                      children: [
-                        if (icon != null)
-                          IconTheme(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 8,
+                    children: [
+                      if (icon != null)
+                        SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: IconTheme(
                             data: Theme.of(
                               context,
-                            ).iconTheme.copyWith(size: 24),
+                            ).iconTheme.copyWith(size: 28),
                             child: icon!,
                           ),
-                        if (title != null)
-                          Expanded(
-                            child: DefaultTextStyle(
-                              style: Theme.of(context).textTheme.titleMedium!,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              child: title!,
-                            ),
+                        ),
+                      if (title != null)
+                        Expanded(
+                          child: DefaultTextStyle(
+                            style: Theme.of(context).textTheme.titleMedium!,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            child: title!,
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ),
 
-                if (endActions != null)
-                  ...endActions!.map(
-                    (action) => Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: action,
-                    ),
-                  ),
+                if (endActions != null) ...endActions!,
+
+                SizedBox(),
 
                 if (UniversalPlatform.isDesktop &&
                     showWindowControls &&

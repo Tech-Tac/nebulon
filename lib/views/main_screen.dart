@@ -93,25 +93,21 @@ class ViewBody extends ConsumerWidget {
     return Column(
       children: [
         TitleBar(
-          icon: SizedBox(
-            width: 32,
-            height: 32,
-            child:
-                selectedChannel == null
-                    ? const Icon(
-                      Icons.discord,
-                    ) // this is a placeholder until I design a logo
-                    : selectedChannel.iconPath != null
-                    ? CircleAvatar(
-                      backgroundImage: cdnImage(
-                        context,
-                        selectedChannel.iconPath!,
-                        size: 32,
-                      ),
-                      radius: 16,
-                    )
-                    : Icon(getChannelSymbol(selectedChannel.type)),
-          ),
+          icon:
+              selectedChannel == null
+                  ? const Icon(
+                    Icons.discord,
+                  ) // this is a placeholder until I design a logo
+                  : selectedChannel.iconPath != null
+                  ? CircleAvatar(
+                    backgroundImage: cdnImage(
+                      context,
+                      selectedChannel.iconPath!,
+                      size: 32,
+                    ),
+                    radius: 16,
+                  )
+                  : Icon(getChannelSymbol(selectedChannel.type)),
           title: Text(title ?? "Nebulon"),
           startActions: [
             if (hasDrawer)
@@ -120,6 +116,7 @@ class ViewBody extends ConsumerWidget {
                 icon: Icon(Icons.menu),
               ),
           ],
+
           // the title-bar is not left aligned, we will put the controls on the left sidebar instead
           showWindowControls: !UniversalPlatform.isMacOS,
         ),
