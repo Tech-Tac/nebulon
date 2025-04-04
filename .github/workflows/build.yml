@@ -82,13 +82,15 @@ jobs:
           fi
 
       - name: Upload Build Artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.platform }}
           path: |
-            build/app/outputs/flutter-apk/*.apk
-            build/ios/iphoneos/*.app
-            build/web
-            build/windows/x64/runner/Release
-            build/linux/x64/release/bundle
-            build/macos/Build/Products/Release
+            ${{ matrix.platform == 'android' && 'build/app/outputs/flutter-apk/release.apk' || '' }}
+            ${{ matrix.platform == 'android-debug' && 'build/app/outputs/flutter-apk/app-debug.apk' || '' }}
+            ${{ matrix.platform == 'ios' && 'build/ios/iphoneos/Runner.app' || '' }}
+            ${{ matrix.platform == 'web' && 'build/web' || '' }}
+            ${{ matrix.platform == 'windows' && 'build/windows/x64/runner/Release' || '' }}
+            ${{ matrix.platform == 'linux' && 'build/linux/x64/release/bundle' || '' }}
+            ${{ matrix.platform == 'macos' && 'build/macos/Build/Products/Release' || '' }}
