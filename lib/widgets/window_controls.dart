@@ -277,7 +277,7 @@ class TitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenPadding = MediaQuery.of(context).padding;
+    final screenPadding = MediaQuery.paddingOf(context);
 
     return WindowMoveArea(
       child: ColoredBox(

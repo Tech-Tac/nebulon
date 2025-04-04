@@ -114,7 +114,7 @@ class _ChannelTextFieldState extends ConsumerState<ChannelTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final screenPadding = MediaQuery.of(context).padding;
+    final screenPadding = MediaQuery.paddingOf(context);
 
     return ColoredBox(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,

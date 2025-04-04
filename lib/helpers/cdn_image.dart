@@ -9,7 +9,7 @@ ImageProvider cdnImage(
 }) {
   int? finalSize;
   if (size != null) {
-    final double scale = MediaQuery.of(context).devicePixelRatio;
+    final double scale = MediaQuery.devicePixelRatioOf(context);
     finalSize = (size * scale).toInt();
 
     List<int> validValues = [

@@ -91,7 +91,7 @@ class _MessageWidgetState extends State<MessageWidget>
                           ),
                           Text(
                             DateFormat(
-                              "M/d/yy, h:mm a",
+                              "h:mm a",
                             ).format(widget.message.timestamp),
                             style: TextStyle(
                               color: Theme.of(context).hintColor,

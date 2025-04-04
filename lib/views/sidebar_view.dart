@@ -29,7 +29,7 @@ class SidebarMenuState extends ConsumerState<SidebarMenu>
     super.build(context);
 
     final selectedGuild = ref.watch(selectedGuildProvider);
-    final screenPadding = MediaQuery.of(context).padding;
+    final screenPadding = MediaQuery.paddingOf(context);
     final isSidebarCollapsed = ref.watch(menuCollapsedProvider);
 
     return Column(
@@ -109,7 +109,7 @@ class GuildList extends ConsumerWidget {
     final selectedGuild = ref.watch(selectedGuildProvider);
     final selectedGuildNotifier = ref.read(selectedGuildProvider.notifier);
 
-    final screenPadding = MediaQuery.of(context).padding;
+    final screenPadding = MediaQuery.paddingOf(context);
 
     return ColoredBox(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,

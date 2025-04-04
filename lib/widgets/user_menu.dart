@@ -54,7 +54,7 @@ class _UserMenuCardState extends ConsumerState<UserMenuCard>
               // Animated Popup positioned above the button
               Positioned(
                 left: offset.dx,
-                bottom: MediaQuery.of(context).size.height - offset.dy + 8,
+                bottom: MediaQuery.sizeOf(context).height - offset.dy + 8,
                 child: FadeTransition(
                   opacity: _fadeAnimation,
                   child: Material(
@@ -90,7 +90,7 @@ class _UserMenuCardState extends ConsumerState<UserMenuCard>
   @override
   Widget build(BuildContext context) {
     final connectedUser = ref.watch(connectedUserProvider);
-    final screenPadding = MediaQuery.of(context).padding;
+    final screenPadding = MediaQuery.paddingOf(context);
     return Material(
       color: Theme.of(context).colorScheme.surfaceBright,
       child: Padding(
