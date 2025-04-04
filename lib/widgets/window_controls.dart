@@ -294,7 +294,7 @@ class TitleBar extends StatelessWidget {
 
                 SizedBox(),
 
-                if (startActions != null) ...startActions!,
+                Row(spacing: 2, children: startActions ?? []),
 
                 Expanded(
                   child: Row(
@@ -327,7 +327,7 @@ class TitleBar extends StatelessWidget {
 
                 if (endActions != null) ...endActions!,
 
-                SizedBox(),
+                Row(spacing: 2, children: endActions ?? []),
 
                 if (UniversalPlatform.isDesktop &&
                     showWindowControls &&
