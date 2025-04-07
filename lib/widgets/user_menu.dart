@@ -89,7 +89,7 @@ class _UserMenuCardState extends ConsumerState<UserMenuCard>
 
   @override
   Widget build(BuildContext context) {
-    final connectedUser = ref.watch(connectedUserProvider);
+    final user = ref.watch(connectedUserProvider);
     final screenPadding = MediaQuery.paddingOf(context);
     return Material(
       color: Theme.of(context).colorScheme.surfaceBright,
@@ -111,44 +111,39 @@ class _UserMenuCardState extends ConsumerState<UserMenuCard>
                     key: _buttonKey,
                     onTap: _showPopup,
                     borderRadius: BorderRadius.circular(8),
-                    child: connectedUser.when(
-                      data:
-                          (user) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 4,
-                              horizontal: 8,
-                            ),
-                            child: Row(
-                              spacing: 8,
-                              children: [
-                                UserAvatar(user: user, size: 40),
-                                if (!widget.collapsed)
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(user.displayName),
-                                      Text(
-                                        "Online",
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.bodySmall!.copyWith(
-                                          color: Theme.of(context).hintColor,
+                    child:
+                        user != null
+                            ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 4,
+                                horizontal: 8,
+                              ),
+                              child: Row(
+                                spacing: 8,
+                                children: [
+                                  UserAvatar(user: user, size: 40),
+                                  if (!widget.collapsed)
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(user.displayName),
+                                        Text(
+                                          "Online",
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall!.copyWith(
+                                            color: Theme.of(context).hintColor,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                              ],
-                            ),
-                          ),
-                      loading: () {
-                        return Center(child: CircularProgressIndicator());
-                      },
-                      error:
-                          (error, stackTrace) =>
-                              Center(child: Text("Error loading user")),
-                    ),
+                                      ],
+                                    ),
+                                ],
+                              ),
+                            )
+                            : Center(child: CircularProgressIndicator()),
                   ),
                 ),
                 if (!widget.collapsed)
@@ -176,27 +171,25 @@ class UserMenu extends ConsumerWidget {
     final user = ref.watch(connectedUserProvider);
     return Container(
       padding: EdgeInsets.all(10),
-      child: user.when<Widget>(
-        data:
-            (data) => Column(
-              spacing: 8,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UserAvatar(user: data, size: 64),
-                Text(data.displayName),
-                Text("Online"),
-                ElevatedButton(
-                  onPressed: () {
-                    SessionManager.logout();
-                    Navigator.of(context).pushReplacementNamed("/login");
-                  },
-                  child: Text("Logout"),
-                ),
-              ],
-            ),
-        error: (err, stack) => Text(err.toString()),
-        loading: () => CircularProgressIndicator(),
-      ),
+      child:
+          user != null
+              ? Column(
+                spacing: 8,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  UserAvatar(user: user, size: 64),
+                  Text(user.displayName),
+                  Text("Online"),
+                  ElevatedButton(
+                    onPressed: () {
+                      SessionManager.logout();
+                      Navigator.of(context).pushReplacementNamed("/login");
+                    },
+                    child: Text("Logout"),
+                  ),
+                ],
+              )
+              : CircularProgressIndicator(),
     );
   }
 }

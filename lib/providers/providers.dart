@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/models/guild.dart';
 import 'package:nebulon/models/user.dart';
@@ -15,6 +17,9 @@ class ApiServiceNotifier extends StateNotifier<AsyncValue<ApiService>> {
     try {
       final service = ApiService(ref: ref, token: token);
       state = AsyncValue.data(service);
+      service.currentUserStream.listen((user) {
+        ref.read(connectedUserProvider.notifier).state = user;
+      });
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -36,15 +41,7 @@ final messageEventStreamProvider = StreamProvider<MessageEvent>((ref) {
       );
 });
 
-final connectedUserProvider = StreamProvider<UserModel>((ref) {
-  return ref
-      .watch(apiServiceProvider)
-      .when(
-        data: (apiService) => apiService.currentUserStream,
-        loading: () => const Stream.empty(),
-        error: (err, stack) => Stream.error(err, stack),
-      );
-});
+final connectedUserProvider = StateProvider<UserModel?>((_) => null);
 
 final guildsProvider = StateProvider<List<GuildModel>>((ref) => []);
 

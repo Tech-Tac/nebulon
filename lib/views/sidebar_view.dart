@@ -122,7 +122,7 @@ class GuildList extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (UniversalPlatform.isMacOS)
-              SizedBox(width: 60, height: 32, child: WindowControls()),
+              SizedBox(width: 60, height: 48, child: WindowControls()),
             Expanded(
               child: SuperListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),

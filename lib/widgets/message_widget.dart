@@ -192,7 +192,7 @@ class MessageAttachments extends StatelessWidget {
                                   ThumbHash.fromBase64(
                                     a["placeholder"],
                                   ).toImage(),
-                              image: NetworkImage(a["url"]),
+                              image: cdnImage(context, a["url"]),
                               fit: BoxFit.cover,
                               width: finalWidth,
                               height: finalHeight,

@@ -100,6 +100,8 @@ class ViewBody extends ConsumerWidget {
                   ) // this is a placeholder until I design a logo
                   : selectedChannel.iconPath != null
                   ? CircleAvatar(
+                    // to prevent fade-in animation when switching channels
+                    key: ValueKey("${selectedChannel.id}-title-icon"),
                     backgroundImage: cdnImage(
                       context,
                       selectedChannel.iconPath!,

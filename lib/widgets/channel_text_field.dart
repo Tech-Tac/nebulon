@@ -63,7 +63,7 @@ class _ChannelTextFieldState extends ConsumerState<ChannelTextField> {
       final nonce = _api.getNextNonce();
       final pendingMessage = MessageModel(
         id: Snowflake.fromDate(DateTime.now()),
-        author: ref.read(connectedUserProvider).value!,
+        author: ref.read(connectedUserProvider)!,
         content: text,
         channelId: widget.channel.id,
         timestamp: DateTime.now(),

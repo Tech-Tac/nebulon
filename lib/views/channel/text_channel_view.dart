@@ -70,7 +70,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
         _typingUsers[event.message!.author]!.cancel();
         _typingUsers.remove(event.message!.author);
       } else if (event.message!.author.id ==
-              ref.read(connectedUserProvider).value!.id &&
+              ref.read(connectedUserProvider)?.id &&
           _pendingMessages.isNotEmpty) {
         if (_pendingMessages.any(
               (message) => message.nonce == event.message!.nonce,
@@ -101,7 +101,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
 
   void _onTypingEvent(ChannelTypingEvent event) async {
     if (event.channelId != widget.channel.id ||
-        event.userId == ref.read(connectedUserProvider).value?.id) {
+        event.userId == ref.read(connectedUserProvider)?.id) {
       return;
     }
 

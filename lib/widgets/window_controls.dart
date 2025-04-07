@@ -150,7 +150,6 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
       WindowButton(
         onPressed: windowManager.minimize,
         icon: Icon(Icons.horizontal_rule),
-        size: UniversalPlatform.isWindows ? 48 : null,
       ),
 
       if (_isFullscreen)
