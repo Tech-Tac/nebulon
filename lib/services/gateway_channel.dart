@@ -61,7 +61,7 @@ class GatewayChannel {
     _channel = WebSocketChannel.connect(
       Uri.parse(
         url ?? _initialUrl,
-      ).replace(queryParameters: {"v": "9", "encoding": "json"}),
+      ).replace(queryParameters: {"v": "10", "encoding": "json"}),
     );
     _channel.stream.listen(
       (event) {

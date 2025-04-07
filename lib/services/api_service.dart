@@ -46,7 +46,7 @@ class ChannelTypingEvent {
 
 // ignore: non_constant_identifier_names
 final DiscordAPIOptions = BaseOptions(
-  baseUrl: "https://discord.com/api/v9/",
+  baseUrl: "https://discord.com/api/v10/",
   responseType: ResponseType.json,
   headers: {'Content-Type': 'application/json'},
 );

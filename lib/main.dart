@@ -67,7 +67,7 @@ class MyApp extends ConsumerWidget {
         ),
         useMaterial3: true,
       ),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       builder: (_, child) => WindowFrame(child: child!),
 
