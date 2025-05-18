@@ -2,7 +2,7 @@
 
 A multi-platform native Discord client written in Flutter, aiming to provide the usual Discord experience with less resource usage and extra quality of life changes.
 
-Supports **Windows**, ,**macOS** and **Linux**, in addition to **Android** and **iOS**.
+Supports **Windows**, **macOS** and **Linux**, in addition to **Android** and **iOS**.
 
 ## Disclaimers
 
