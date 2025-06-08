@@ -49,6 +49,7 @@ class ResizableSidebarState extends State<ResizableSidebar> {
   @override
   Widget build(BuildContext context) {
     Color hoverColor = Theme.of(context).colorScheme.secondary;
+
     return SizedBox(
       width: isCollapsed ? widget.collapsedSize : width,
       child: Stack(

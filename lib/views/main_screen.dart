@@ -5,7 +5,7 @@ import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/providers/providers.dart';
 import 'package:nebulon/views/adaptive_menu_layout.dart';
 import 'package:nebulon/views/channels/channel_view.dart';
-import 'package:nebulon/widgets/sidebar/sidebar_menu.dart';
+import 'package:nebulon/widgets/sidebar/sidebar_body.dart';
 import 'package:nebulon/widgets/window/window_controls.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';

@@ -28,12 +28,15 @@ class NoChannel extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 16,
+
         children: [
           Icon(Icons.chat_bubble_outline_rounded, size: 48, color: Colors.grey),
-          const SizedBox(height: 16),
+
           const Text(
             "Select a channel to start chatting.",
-            style: TextStyle(fontSize: 18, color: Colors.grey),
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
       ),

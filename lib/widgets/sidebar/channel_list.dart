@@ -61,6 +61,7 @@ class ChannelList extends StatelessWidget {
     // should any of the above even be in build()?
 
     return SuperListView.builder(
+      key: PageStorageKey("guild_${guild.id}_channels"),
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: channelTree.length,
       itemBuilder: (context, index) {
@@ -95,19 +96,20 @@ class ChannelCategory extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       // channel categories
       child: ExpansionTile(
-        key: PageStorageKey("${id}_channel_category"),
+        key: PageStorageKey("category_$id"),
         title: Text(title),
         initiallyExpanded: true,
         childrenPadding: EdgeInsets.zero,
         dense: true,
         shape: const Border(),
         children: [
-          SuperListView.builder(
-            key: PageStorageKey("Category list $id"),
+          ListView.builder(
+            key: PageStorageKey("category_${id}_channels"),
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: channels.length,
+            itemExtent: 32,
             itemBuilder: (context, index) {
               return ChannelTile(channel: channels[index]);
             },
