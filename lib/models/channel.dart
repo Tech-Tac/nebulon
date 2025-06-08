@@ -39,7 +39,7 @@ enum ChannelType {
   }
 }
 
-getChannelSymbol(ChannelType? type) => switch (type) {
+IconData getChannelSymbol(ChannelType? type) => switch (type) {
   ChannelType.voice => Icons.mic,
   ChannelType.stage => Icons.podcasts,
   ChannelType.news => Icons.campaign_rounded,

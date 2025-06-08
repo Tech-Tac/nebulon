@@ -324,8 +324,6 @@ class TitleBar extends StatelessWidget {
                   ),
                 ),
 
-                if (endActions != null) ...endActions!,
-
                 Row(spacing: 2, children: endActions ?? []),
 
                 if (UniversalPlatform.isDesktop &&

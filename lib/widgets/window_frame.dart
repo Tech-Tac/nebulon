@@ -26,7 +26,7 @@ class _WindowFrameState extends State<WindowFrame> with WindowListener {
   final double borderWidth = 1;
 
   /// The border radius of the window
-  final double borderRadius = 6;
+  final double borderRadius = 8;
 
   bool _isFocused = true;
   bool _isMaximized = false;

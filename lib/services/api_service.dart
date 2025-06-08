@@ -194,7 +194,7 @@ class ApiService {
 
   int _messageCount = 0;
 
-  getNextNonce() {
+  String getNextNonce() {
     final nonce =
         DateTime.now().millisecondsSinceEpoch.toString() +
         _messageCount.toString();

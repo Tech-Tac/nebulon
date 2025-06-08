@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class ResizableSidebar extends StatefulWidget {
   final Widget child;
-  final double initialWidth;
+  final double width;
   final double minWidth;
   final double maxWidth;
   final bool collapsible;
@@ -15,7 +15,7 @@ class ResizableSidebar extends StatefulWidget {
   const ResizableSidebar({
     super.key,
     required this.child,
-    this.initialWidth = 320,
+    this.width = 360,
     this.minWidth = 256,
     this.maxWidth = 512,
     this.collapsible = false,
@@ -42,7 +42,7 @@ class ResizableSidebarState extends State<ResizableSidebar> {
   @override
   void initState() {
     super.initState();
-    width = widget.initialWidth;
+    width = widget.width;
     isCollapsed = widget.collapsed;
   }
 

@@ -39,7 +39,7 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   cached_network_image: ^3.4.1
   universal_platform: ^1.1.0
-  window_manager: ^0.4.3
+  window_manager: ^0.5.0
   scroll_animator: ^0.3.0
   flutter_secure_storage: ^9.2.4
   shared_preferences: ^2.5.2
@@ -57,7 +57,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -6,8 +6,6 @@ import 'package:nebulon/models/user.dart';
 import 'package:nebulon/services/api_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// final apiServiceProvider = Provider<ApiService>((ref) => ApiService(ref: ref));
-
 class ApiServiceNotifier extends StateNotifier<AsyncValue<ApiService>> {
   ApiServiceNotifier(this.ref) : super(AsyncValue.loading());
 
@@ -42,6 +40,8 @@ final messageEventStreamProvider = StreamProvider<MessageEvent>((ref) {
 });
 
 final connectedUserProvider = StateProvider<UserModel?>((_) => null);
+
+final privateChannelsProvider = StateProvider<List<ChannelModel>>((ref) => []);
 
 final guildsProvider = StateProvider<List<GuildModel>>((ref) => []);
 
@@ -84,5 +84,3 @@ final sidebarCollapsedProvider = StateProvider<bool>((ref) => false);
 final menuCollapsedProvider = Provider.autoDispose(
   (ref) => !ref.watch(hasDrawerProvider) && ref.watch(sidebarCollapsedProvider),
 );
-
-final privateChannelsProvider = StateProvider<List<ChannelModel>>((ref) => []);

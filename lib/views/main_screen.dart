@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nebulon/helpers/cdn_image.dart';
 import 'package:nebulon/models/channel.dart';
@@ -59,7 +60,7 @@ class ResponsiveMenuLayout extends ConsumerWidget {
                     collapsible: true,
                     collapsedSize: 64,
                     collapsed: ref.read(sidebarCollapsedProvider),
-                    initialWidth: ref.read(sidebarWidthProvider),
+                    width: ref.read(sidebarWidthProvider),
                     onCollapseChanged:
                         (isCollapsed) =>
                             ref.read(sidebarCollapsedProvider.notifier).state =
@@ -88,7 +89,13 @@ class ViewBody extends ConsumerWidget {
 
     final String? title = selectedChannel?.displayName;
 
-    windowManager.setTitle(["Nebulon", if (title != null) title].join(" | "));
+    windowManager.setTitle(
+      [
+        "Nebulon",
+        if (kDebugMode) "Debug",
+        if (title != null) title,
+      ].join(" | "),
+    );
 
     return Column(
       children: [
@@ -116,6 +123,13 @@ class ViewBody extends ConsumerWidget {
               IconButton(
                 onPressed: Scaffold.of(context).openDrawer,
                 icon: Icon(Icons.menu),
+              ),
+          ],
+          endActions: [
+            if (kDebugMode)
+              Tooltip(
+                message: "This is a debug build",
+                child: Icon(Icons.bug_report),
               ),
           ],
 
