@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nebulon/widgets/window_controls.dart';
-import 'package:nebulon/widgets/window_move_area.dart';
+import 'package:nebulon/widgets/window/window_controls.dart';
+import 'package:nebulon/widgets/window/window_move_area.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 class SplashScreen extends StatelessWidget {

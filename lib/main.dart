@@ -8,7 +8,7 @@ import 'package:nebulon/views/splash_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:nebulon/widgets/window_frame.dart';
+import 'package:nebulon/widgets/window/window_frame.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

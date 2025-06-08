@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/providers/providers.dart';
-import 'package:nebulon/views/channel/text_channel_view.dart';
+import 'package:nebulon/views/channels/text_channel_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainChannelView extends ConsumerWidget {
@@ -16,7 +16,28 @@ class MainChannelView extends ConsumerWidget {
           key: ValueKey(selectedChannel.id),
           channel: selectedChannel,
         )
-        : const Center(child: Text("Select a channel to start chatting"));
+        : const NoChannel();
+  }
+}
+
+class NoChannel extends StatelessWidget {
+  const NoChannel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.chat_bubble_outline_rounded, size: 48, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text(
+            "Select a channel to start chatting.",
+            style: TextStyle(fontSize: 18, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
   }
 }
 

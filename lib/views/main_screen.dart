@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:nebulon/helpers/cdn_image.dart';
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/providers/providers.dart';
-import 'package:nebulon/views/channel/channel_view.dart';
-import 'package:nebulon/views/sidebar_view.dart';
-import 'package:nebulon/widgets/resizable_sidebar.dart';
-import 'package:nebulon/widgets/window_controls.dart';
+import 'package:nebulon/views/adaptive_menu_layout.dart';
+import 'package:nebulon/views/channels/channel_view.dart';
+import 'package:nebulon/widgets/sidebar/sidebar_menu.dart';
+import 'package:nebulon/widgets/window/window_controls.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
@@ -18,63 +18,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveMenuLayout(
+    return AdaptiveMenuLayout(
       menu: SidebarMenu(key: sidebarKey),
       body: ViewBody(),
-    );
-  }
-}
-
-class ResponsiveMenuLayout extends ConsumerWidget {
-  const ResponsiveMenuLayout({
-    super.key,
-    required this.menu,
-    required this.body,
-  });
-  final Widget menu;
-  final Widget body;
-
-  final double breakpoint = 600;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final double viewWidth = MediaQuery.sizeOf(context).width;
-    final bool isWideScreen = viewWidth > breakpoint;
-
-    if (ref.read(hasDrawerProvider) != !isWideScreen) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(hasDrawerProvider.notifier).state = !isWideScreen;
-      });
-    }
-
-    return Scaffold(
-      drawer: !isWideScreen ? Drawer(child: menu) : null,
-      drawerEnableOpenDragGesture: true,
-      drawerEdgeDragWidth: viewWidth,
-
-      body:
-          isWideScreen
-              ? Row(
-                children: [
-                  ResizableSidebar(
-                    collapsible: true,
-                    collapsedSize: 64,
-                    collapsed: ref.read(sidebarCollapsedProvider),
-                    width: ref.read(sidebarWidthProvider),
-                    onCollapseChanged:
-                        (isCollapsed) =>
-                            ref.read(sidebarCollapsedProvider.notifier).state =
-                                isCollapsed,
-                    onResize:
-                        (width) =>
-                            ref.read(sidebarWidthProvider.notifier).state =
-                                width,
-                    child: menu,
-                  ),
-                  Expanded(child: body),
-                ],
-              )
-              : body,
     );
   }
 }

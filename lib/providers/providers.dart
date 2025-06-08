@@ -63,20 +63,7 @@ final selectedGuildProvider =
       (ref) => SelectedGuildProvider(ref),
     );
 
-class SelectedChannelNotifier extends StateNotifier<ChannelModel?> {
-  SelectedChannelNotifier() : super(null);
-
-  void set(ChannelModel? newChannel) {
-    state = newChannel;
-  }
-}
-
-final selectedChannelProvider =
-    StateNotifierProvider<SelectedChannelNotifier, ChannelModel?>(
-      (ref) => SelectedChannelNotifier(),
-    );
-
-// final selectedChannelProvider = StateProvider<ChannelModel?>((ref) => null);
+final selectedChannelProvider = StateProvider<ChannelModel?>((ref) => null);
 
 final hasDrawerProvider = StateProvider<bool>((ref) => false);
 final sidebarWidthProvider = StateProvider<double>((ref) => 320);

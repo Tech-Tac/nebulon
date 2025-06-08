@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:nebulon/providers/providers.dart';
 import 'package:nebulon/services/session_manager.dart';
-import 'package:nebulon/widgets/window_controls.dart';
+import 'package:nebulon/widgets/window/window_controls.dart';
 import 'package:window_manager/window_manager.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {

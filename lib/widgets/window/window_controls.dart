@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nebulon/widgets/window_move_area.dart';
+import 'package:nebulon/widgets/window/window_move_area.dart';
 
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
@@ -159,9 +159,7 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
         )
       else
         WindowButton(
-          icon: Icon(
-            _isMaximized ? Icons.square_rounded : Icons.crop_square_rounded,
-          ),
+          icon: Icon(_isMaximized ? Icons.square : Icons.square_outlined),
           onPressed:
               _isMaximized ? windowManager.unmaximize : windowManager.maximize,
         ),
