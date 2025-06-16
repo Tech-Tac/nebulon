@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "dev.techtac" "\0"
+            VALUE "CompanyName", "Tech-Tac" "\0"
             VALUE "FileDescription", "Nebulon" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "nebulon" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 dev.techtac. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 Tech-Tac. All rights reserved." "\0"
             VALUE "OriginalFilename", "nebulon.exe" "\0"
             VALUE "ProductName", "Nebulon" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
