@@ -237,6 +237,7 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      // to prevent the window from moving when dragging the buttons
       onPanStart: (_) {},
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,

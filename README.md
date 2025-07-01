@@ -1,6 +1,6 @@
 # Nebulon
 
-A multi-platform native Discord client written in Flutter, aiming to provide the usual Discord experience with less resource usage and extra quality of life changes.
+A multi-platform native Discord client built with Flutter, aiming to provide a familiar Discord experience with less resource usage and extra quality of life changes.
 
 Supports **Windows**, **macOS** and **Linux**, in addition to **Android** and **iOS**.
 
@@ -12,15 +12,15 @@ If you use this client, there is a *small* chance your account may receive bans 
 
 ## Main Features
 
-- **Near-native performance**: no more resource-hungry Chromium instances or Javascript runtimes.
+- **Near-native performance**: No more resource-hungry Chromium instances or Javascript runtimes.
 
 Work in progress:
 
-- **Background notifications**: get notifications from all of your accounts without having to keep the app open and consuming memory.
+- **Background notifications**: Get notifications from all of your accounts without having to keep the app open and consuming memory.
 
-- **Modular UI**: fullscreen a particular channel or pop it into its own window.
+- **Modular UI**: Fullscreen a particular channel or pop it into its own window.
 
-- **Customization**: customize your interface theme globally or per-server.
+- **Customization**: Customize your interface theme globally or per-server.
 
 If you want a feature added, you can open an issue and/or start working on it. Please note that features that violate Discord's terms of service won't be accepted.
 

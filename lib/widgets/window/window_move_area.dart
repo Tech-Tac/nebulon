@@ -52,6 +52,8 @@ void _toggleMaximized() async {
 
 /// Detects doubleTaps without introducing single-tap trigger delay to children,
 /// at the cost of not triggering on doubleTap if the child listens for onTap.
+///
+/// Good when a child's onTap is prioritized over the parent doubleTap.
 class DoubleTapDetector extends StatefulWidget {
   const DoubleTapDetector({
     super.key,

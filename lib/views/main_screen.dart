@@ -11,8 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
 
   static final GlobalKey sidebarKey = GlobalKey<SidebarMenuState>();
 

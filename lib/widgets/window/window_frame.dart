@@ -53,6 +53,7 @@ class _WindowFrameState extends State<WindowFrame> with WindowListener {
   }
 
   Future<void> _initWindowState() async {
+    if (!mounted) return;
     _isFocused = await windowManager.isFocused();
     _isMaximized = await windowManager.isMaximized();
     _isFullScreen = await windowManager.isFullScreen();
@@ -66,9 +67,10 @@ class _WindowFrameState extends State<WindowFrame> with WindowListener {
 
   Widget _buildBorder() {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
-    final lightColor = _isFocused ? Colors.grey.shade700 : Colors.grey.shade600;
-    final darkColor = _isFocused ? Colors.grey.shade800 : Colors.grey.shade900;
-    final color = isLightMode ? lightColor : darkColor;
+    final focusColor =
+        isLightMode ? Colors.grey.shade700 : Colors.grey.shade800;
+    final blurColor = isLightMode ? Colors.grey.shade600 : Colors.grey.shade900;
+    final color = _isFocused ? focusColor : blurColor;
 
     return DecoratedBox(
       // this box determines the color of the border
@@ -116,44 +118,20 @@ class _WindowFrameState extends State<WindowFrame> with WindowListener {
   }
 
   @override
-  void onWindowFocus() {
-    setState(() {
-      _isFocused = true;
-    });
-  }
+  void onWindowFocus() => setState(() => _isFocused = true);
 
   @override
-  void onWindowBlur() {
-    setState(() {
-      _isFocused = false;
-    });
-  }
+  void onWindowBlur() => setState(() => _isFocused = false);
 
   @override
-  void onWindowMaximize() {
-    setState(() {
-      _isMaximized = true;
-    });
-  }
+  void onWindowMaximize() => setState(() => _isMaximized = true);
 
   @override
-  void onWindowUnmaximize() {
-    setState(() {
-      _isMaximized = false;
-    });
-  }
+  void onWindowUnmaximize() => setState(() => _isMaximized = false);
 
   @override
-  void onWindowEnterFullScreen() {
-    setState(() {
-      _isFullScreen = true;
-    });
-  }
+  void onWindowEnterFullScreen() => setState(() => _isFullScreen = true);
 
   @override
-  void onWindowLeaveFullScreen() {
-    setState(() {
-      _isFullScreen = false;
-    });
-  }
+  void onWindowLeaveFullScreen() => setState(() => _isFullScreen = false);
 }

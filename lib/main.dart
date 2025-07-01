@@ -73,7 +73,7 @@ class MyApp extends ConsumerWidget {
 
       // im not even using these
       routes: {
-        "/home": (context) => const HomeScreen(),
+        "/home": (context) => const MainScreen(),
         "/login": (context) => const LoginScreen(),
       },
       home: FutureBuilder(
@@ -96,7 +96,7 @@ class MyApp extends ConsumerWidget {
                   );
                 }
 
-                return const HomeScreen();
+                return const MainScreen();
               } else {
                 return const LoginScreen();
               }
