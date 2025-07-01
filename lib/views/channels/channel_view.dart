@@ -3,6 +3,7 @@ import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/providers/providers.dart';
 import 'package:nebulon/views/channels/text_channel_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nebulon/views/channels/voice_channel_view.dart';
 
 class MainChannelView extends ConsumerWidget {
   const MainChannelView({super.key});
@@ -48,12 +49,25 @@ class ChannelView extends StatelessWidget {
   final ChannelModel channel;
   const ChannelView({super.key, required this.channel});
 
+  Widget? _getChannelView(ChannelModel channel) {
+    if (channel.type.isText) {
+      return TextChannelView(key: ValueKey(channel.id), channel: channel);
+    } else if (channel.type.isVoice) {
+      return VoiceChannelView(key: ValueKey(channel.id), channel: channel);
+    }
+    return null; // Unsupported channel type
+  }
+
   @override
   Widget build(BuildContext context) {
-    return channel.type.isText
-        ? TextChannelView(channel: channel)
-        : switch (channel.type) {
-          _ => Center(child: Text("Can't view this channel type yet.")),
-        };
+    final Widget? channelView = _getChannelView(channel);
+
+    return channelView ??
+        Center(
+          child: Text(
+            "Viewing this channel type is not yet supported.",
+            style: TextStyle(color: Theme.of(context).hintColor),
+          ),
+        );
   }
 }

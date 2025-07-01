@@ -12,6 +12,9 @@ set(APPLICATION_ID "dev.techtac.nebulon")
 # Required for flutter_secure_storage
 add_definitions(-DAPPLICATION_ID=\"dev.techtac.nebulon\")
 
+# Suppress errors about deprecated C++ features that are used in the json dependency of flutter_secure_storage
+add_compile_options(-Wno-deprecated-literal-operator)
+
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
 cmake_policy(SET CMP0063 NEW)

@@ -12,17 +12,21 @@ class AdaptiveMenuLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final menuWithKey = KeyedSubtree(key: const ValueKey('menu'), child: menu);
+    final bodyWithKey = KeyedSubtree(key: const ValueKey('body'), child: body);
+
     final double viewWidth = MediaQuery.sizeOf(context).width;
     final bool isWideScreen = viewWidth > breakpoint;
 
-    if (ref.read(hasDrawerProvider) != !isWideScreen) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(hasDrawerProvider.notifier).state = !isWideScreen;
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final shouldHaveDrawer = !isWideScreen;
+      if (ref.read(hasDrawerProvider) != shouldHaveDrawer) {
+        ref.read(hasDrawerProvider.notifier).state = shouldHaveDrawer;
+      }
+    });
 
     return Scaffold(
-      drawer: !isWideScreen ? Drawer(child: menu) : null,
+      drawer: !isWideScreen ? Drawer(child: menuWithKey) : null,
       drawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: viewWidth,
 
@@ -43,12 +47,12 @@ class AdaptiveMenuLayout extends ConsumerWidget {
                         (width) =>
                             ref.read(sidebarWidthProvider.notifier).state =
                                 width,
-                    child: menu,
+                    child: menuWithKey,
                   ),
-                  Expanded(child: body),
+                  Expanded(child: bodyWithKey),
                 ],
               )
-              : body,
+              : bodyWithKey,
     );
   }
 }

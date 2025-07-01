@@ -159,7 +159,10 @@ class _WindowControlsState extends State<WindowControls> with WindowListener {
         )
       else
         WindowButton(
-          icon: Icon(_isMaximized ? Icons.square : Icons.square_outlined),
+          // square is too large, but crop_square has no filled variant
+          icon: Icon(
+            _isMaximized ? Icons.square_rounded : Icons.crop_square_rounded,
+          ),
           onPressed:
               _isMaximized ? windowManager.unmaximize : windowManager.maximize,
         ),

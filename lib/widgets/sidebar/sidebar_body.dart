@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:nebulon/providers/providers.dart';
@@ -27,8 +25,6 @@ class SidebarMenuState extends ConsumerState<SidebarMenu>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    log("Building SidebarMenu");
 
     final selectedGuild = ref.watch(selectedGuildProvider);
     final screenPadding = MediaQuery.paddingOf(context);
