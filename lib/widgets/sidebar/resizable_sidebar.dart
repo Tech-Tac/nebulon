@@ -11,6 +11,7 @@ class ResizableSidebar extends StatefulWidget {
   final double collapsedSize;
   final Function(bool state)? onCollapseChanged;
   final Function(double width)? onResize;
+  final Function(double width)? onResizeEnd;
 
   const ResizableSidebar({
     super.key,
@@ -23,6 +24,7 @@ class ResizableSidebar extends StatefulWidget {
     this.collapsedSize = 0,
     this.onCollapseChanged,
     this.onResize,
+    this.onResizeEnd,
   }) : assert(maxWidth > minWidth),
        assert(collapsedSize < minWidth),
        assert(collapsed ? collapsible : true);
@@ -89,12 +91,26 @@ class ResizableSidebarState extends State<ResizableSidebar> {
                   }
                 });
               },
-              onHorizontalDragEnd: (_) => setState(() => _isDragging = false),
+              onHorizontalDragEnd:
+                  (_) => setState(() {
+                    _isDragging = false;
+                    if (widget.onResizeEnd != null) widget.onResizeEnd!(width);
+                  }),
               onHorizontalDragCancel:
                   () => setState(() {
                     _isDragging = false;
                     _isDragCanceled = true;
                   }),
+              onDoubleTap: () {
+                if (widget.collapsible) {
+                  setState(() {
+                    isCollapsed = !isCollapsed;
+                    if (widget.onCollapseChanged != null) {
+                      widget.onCollapseChanged!(isCollapsed);
+                    }
+                  });
+                }
+              },
               child: MouseRegion(
                 hitTestBehavior: HitTestBehavior.translucent,
                 opaque: false,
@@ -105,7 +121,7 @@ class ResizableSidebarState extends State<ResizableSidebar> {
                 onEnter: (_) {
                   setState(() => _isDragCanceled = false);
                   _hoverTimer = Timer(
-                    const Duration(milliseconds: 300),
+                    const Duration(milliseconds: 250),
                     () => setState(() => _isResizerHovered = true),
                   );
                 },
