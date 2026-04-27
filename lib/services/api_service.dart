@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nebulon/helpers/common.dart';
 
 import 'package:nebulon/models/base.dart';
 import 'package:nebulon/models/channel.dart';
@@ -54,36 +55,14 @@ final DiscordAPIOptions = BaseOptions(
 );
 
 class ApiService {
-  // this class is really a mess
-
-
-  late final Ref _ref;
-
-  ApiService({required String token, required Ref ref}) : _token = token , _ref = ref {
-    _connectGateway();
-  }
-
-  void dispose() {
-    _gateway?.dispose();
-    _dio.close();
-    _messageEventController.close();
-    _channelTypingController.close();
-    _currentUserStreamController.close();
-  }
+  // this class is less of a mess now
 
   final String _token;
+  final Ref _ref;
 
+  final Dio _dio = Dio(DiscordAPIOptions);
+  
   GatewayChannel? _gateway;
-
-  late final Dio _dio = () {
-    final dio = Dio(DiscordAPIOptions);
-    dio.interceptors.addAll([
-      AuthorizationInterceptor(_token),
-      RateLimitInterceptor(dio),
-    ]);
-
-    return dio;
-  }();
 
   final _messageEventController = StreamController<MessageEvent>.broadcast();
   Stream<MessageEvent> get messageEventStream => _messageEventController.stream;
@@ -97,11 +76,26 @@ class ApiService {
   Stream<UserModel> get currentUserStream =>
       _currentUserStreamController.stream;
 
-  void _connectGateway() async {
-    if (_token == "") return;
 
+  ApiService({required String token, required Ref ref}) : _token = token , _ref = ref {
+    _dio.interceptors.addAll([
+      AuthorizationInterceptor(_token),
+      RateLimitInterceptor(_dio),
+    ]);
+    _connectGateway();
+  }
+
+  void dispose() {
+    _gateway?.dispose();
+    _dio.close();
+    _messageEventController.close();
+    _channelTypingController.close();
+    _currentUserStreamController.close();
+  }
+
+  void _connectGateway() async {
     _gateway = GatewayChannel(
-      (await _dio.get<Map<String, dynamic>>("/gateway")).data!["url"],
+      (await _dio.get<Json>("/gateway")).data!["url"],
       _token,
     );
     _gateway!.listen(_onGatewayEvent);
@@ -166,7 +160,7 @@ class ApiService {
     int? limit = 50,
     Snowflake? before,
   }) async {
-    Map<String, dynamic> queryParameters = {};
+    Json queryParameters = {};
     if (limit != null) queryParameters["limit"] = limit;
     if (before != null) queryParameters["before"] = before.value;
     final data =
