@@ -34,7 +34,7 @@ class DMList extends ConsumerWidget {
                     : Icon(Icons.group_rounded, size: 24),
           ),
           onTap: () {
-            ref.read(selectedChannelProvider.notifier).state = channel;
+            ref.read(selectedChannelProvider.notifier).select(channel);
             Scaffold.of(context).closeDrawer();
           },
           dense: true,

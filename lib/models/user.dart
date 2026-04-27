@@ -59,7 +59,10 @@ class UserModel extends CacheableResource {
     avatarHash = other.avatarHash;
   }
 
-  static Future<UserModel> getById(Snowflake id) async {
-    return _cache.getById(Snowflake(id)) ?? await ApiService().getUser(id);
+  static Future<UserModel> getById(
+    Snowflake id,
+    ApiService service,
+  ) async {
+    return _cache.getById(id) ?? await service.getUser(id);
   }
 }

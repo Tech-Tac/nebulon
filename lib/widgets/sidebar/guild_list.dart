@@ -43,7 +43,7 @@ class GuildList extends ConsumerWidget {
                             item: const Icon(Icons.chat_bubble),
                             text: "Direct Messages",
                             isSelected: selectedGuild == null,
-                            onTap: () => selectedGuildNotifier.set(null),
+                            onTap: () => selectedGuildNotifier.select(null),
                           ),
                         ),
 
@@ -70,7 +70,7 @@ class GuildList extends ConsumerWidget {
                               )
                               : null,
                       text: guild.name,
-                      onTap: () => selectedGuildNotifier.set(guild),
+                      onTap: () => selectedGuildNotifier.select(guild),
                       isSelected: selectedGuild == guild,
                       hasDot: true,
                     ),

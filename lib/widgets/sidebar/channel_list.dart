@@ -135,7 +135,7 @@ class ChannelTile extends ConsumerWidget {
       leading: Icon(getChannelSymbol(channel.type)),
       selected: isSelected,
       onTap: () {
-        selectedChannelNotifier.state = channel;
+        selectedChannelNotifier.select(channel);
         Scaffold.of(context).closeDrawer();
       },
       mouseCursor: SystemMouseCursors.basic,

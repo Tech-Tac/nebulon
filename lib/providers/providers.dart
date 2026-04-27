@@ -1,24 +1,27 @@
 import 'dart:async';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/models/guild.dart';
 import 'package:nebulon/models/user.dart';
 import 'package:nebulon/services/api_service.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
-class ApiServiceNotifier extends StateNotifier<AsyncValue<ApiService>> {
-  ApiServiceNotifier(this.ref) : super(AsyncValue.loading());
+// api service
 
-  final Ref ref;
+class ApiServiceNotifier extends AsyncNotifier<ApiService> {
+  @override
+  Future<ApiService> build() async {
+    return Future.value(Completer<ApiService>().future); // stays loading
+  }
 
-  void initialize(String token) {
+  Future<void> initialize(String token) async {
+    state = const AsyncValue.loading();
     try {
       final service = ApiService(ref: ref, token: token);
-      state = AsyncValue.data(service);
+      
       service.currentUserStream.listen((user) {
-        ref.read(connectedUserProvider.notifier).state = user;
+        ref.read(connectedUserProvider.notifier).setUser(user);
       });
+      state = AsyncValue.data(service);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -26,49 +29,146 @@ class ApiServiceNotifier extends StateNotifier<AsyncValue<ApiService>> {
 }
 
 final apiServiceProvider =
-    StateNotifierProvider<ApiServiceNotifier, AsyncValue<ApiService>>(
-      (ref) => ApiServiceNotifier(ref),
-    );
+    AsyncNotifierProvider<ApiServiceNotifier, ApiService>(
+  ApiServiceNotifier.new,
+);
+
+// event stream
 
 final messageEventStreamProvider = StreamProvider<MessageEvent>((ref) {
-  return ref
-      .watch(apiServiceProvider)
-      .when(
-        data: (apiService) => apiService.messageEventStream,
+  return ref.watch(apiServiceProvider).when(
+        data: (api) => api.messageEventStream,
         loading: () => const Stream.empty(),
-        error: (err, stack) => Stream.error(err, stack),
+        error: (e, st) => Stream.error(e, st),
       );
 });
 
-final connectedUserProvider = StateProvider<UserModel?>((_) => null);
+// connected user
 
-final privateChannelsProvider = StateProvider<List<ChannelModel>>((ref) => []);
+class ConnectedUserNotifier extends Notifier<UserModel?> {
+  @override
+  UserModel? build() => null;
 
-final guildsProvider = StateProvider<List<GuildModel>>((ref) => []);
+  void setUser(UserModel user) => state = user;
+  void clear() => state = null;
+}
 
-class SelectedGuildProvider extends StateNotifier<GuildModel?> {
-  SelectedGuildProvider(this.ref) : super(null);
+final connectedUserProvider =
+    NotifierProvider<ConnectedUserNotifier, UserModel?>(
+  ConnectedUserNotifier.new,
+);
 
-  final Ref ref;
+// private channels
 
-  void set(GuildModel? newGuild) {
-    state = newGuild;
-    if (newGuild != null) {
-      ref.read(apiServiceProvider).value?.subscribeToGuild(newGuild.id);
+class PrivateChannelsNotifier extends Notifier<List<ChannelModel>> {
+  @override
+  List<ChannelModel> build() => [];
+
+  void setAll(List<ChannelModel> channels) => state = channels;
+  void add(ChannelModel channel) => state = [...state, channel];
+  void remove(ChannelModel channel) =>
+      state = state.where((c) => c.id != channel.id).toList();
+}
+
+final privateChannelsProvider =
+    NotifierProvider<PrivateChannelsNotifier, List<ChannelModel>>(
+  PrivateChannelsNotifier.new,
+);
+
+// guilds
+
+class GuildsNotifier extends Notifier<List<GuildModel>> {
+  @override
+  List<GuildModel> build() => [];
+
+  void setAll(List<GuildModel> guilds) => state = guilds;
+  void add(GuildModel guild) => state = [...state, guild];
+  void remove(GuildModel guild) =>
+      state = state.where((g) => g.id != guild.id).toList();
+}
+
+final guildsProvider = NotifierProvider<GuildsNotifier, List<GuildModel>>(
+  GuildsNotifier.new,
+);
+
+// selected guild
+
+class SelectedGuildNotifier extends Notifier<GuildModel?> {
+  @override
+  GuildModel? build() => null;
+
+  void select(GuildModel? guild) {
+    state = guild;
+    if (guild != null) {
+      // Side effect: subscribe to gateway events for this guild
+      ref.read(apiServiceProvider).value?.subscribeToGuild(guild.id);
     }
   }
+
+  void clear() => state = null;
 }
 
 final selectedGuildProvider =
-    StateNotifierProvider<SelectedGuildProvider, GuildModel?>(
-      (ref) => SelectedGuildProvider(ref),
-    );
+    NotifierProvider<SelectedGuildNotifier, GuildModel?>(
+  SelectedGuildNotifier.new,
+);
 
-final selectedChannelProvider = StateProvider<ChannelModel?>((ref) => null);
+// selected channel
 
-final hasDrawerProvider = StateProvider<bool>((ref) => false);
-final sidebarWidthProvider = StateProvider<double>((ref) => 320);
-final sidebarCollapsedProvider = StateProvider<bool>((ref) => false);
+class SelectedChannelNotifier extends Notifier<ChannelModel?> {
+  @override
+  ChannelModel? build() => null;
+
+  void select(ChannelModel? channel) => state = channel;
+  void clear() => state = null;
+}
+
+final selectedChannelProvider =
+    NotifierProvider<SelectedChannelNotifier, ChannelModel?>(
+  SelectedChannelNotifier.new,
+);
+
+// ui state
+
+class HasDrawerNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+  void toggle() => state = !state;
+}
+
+final hasDrawerProvider = NotifierProvider<HasDrawerNotifier, bool>(
+  HasDrawerNotifier.new,
+);
+
+class SidebarWidthNotifier extends Notifier<double> {
+  @override
+  double build() => 320;
+
+  void set(double width) => state = width;
+}
+
+final sidebarWidthProvider = NotifierProvider<SidebarWidthNotifier, double>(
+  SidebarWidthNotifier.new,
+);
+
+class SidebarCollapsedNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+  void toggle() => state = !state;
+}
+
+final sidebarCollapsedProvider =
+    NotifierProvider<SidebarCollapsedNotifier, bool>(
+  SidebarCollapsedNotifier.new,
+);
+
+// derived state
+
 final menuCollapsedProvider = Provider.autoDispose(
-  (ref) => !ref.watch(hasDrawerProvider) && ref.watch(sidebarCollapsedProvider),
+  (ref) =>
+      !ref.watch(hasDrawerProvider) && ref.watch(sidebarCollapsedProvider),
 );

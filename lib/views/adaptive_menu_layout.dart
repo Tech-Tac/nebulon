@@ -21,7 +21,7 @@ class AdaptiveMenuLayout extends ConsumerWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final shouldHaveDrawer = !isWideScreen;
       if (ref.read(hasDrawerProvider) != shouldHaveDrawer) {
-        ref.read(hasDrawerProvider.notifier).state = shouldHaveDrawer;
+        ref.read(hasDrawerProvider.notifier).set(shouldHaveDrawer);
       }
     });
 
@@ -41,12 +41,10 @@ class AdaptiveMenuLayout extends ConsumerWidget {
                     width: ref.read(sidebarWidthProvider),
                     onCollapseChanged:
                         (isCollapsed) =>
-                            ref.read(sidebarCollapsedProvider.notifier).state =
-                                isCollapsed,
+                            ref.read(sidebarCollapsedProvider.notifier).set(isCollapsed),
                     onResize:
                         (width) =>
-                            ref.read(sidebarWidthProvider.notifier).state =
-                                width,
+                            ref.read(sidebarWidthProvider.notifier).set(width),
                     child: menuWithKey,
                   ),
                   Expanded(child: bodyWithKey),

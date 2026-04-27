@@ -105,7 +105,7 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
       return;
     }
 
-    final user = await UserModel.getById(event.userId);
+    final user = await UserModel.getById(event.userId, ref.read(apiServiceProvider).requireValue);
     _typingUsers[user]?.cancel();
     if (!mounted) return;
     setState(() {

@@ -129,14 +129,14 @@ class ApiService {
     switch (event.type) {
       case "READY":
         _currentUserStreamController.add(UserModel.fromJson(data["user"]));
-        _ref.read(guildsProvider.notifier).state =
+        _ref.read(guildsProvider.notifier).setAll(
             (data["guilds"] as List)
                 .map((guild) => GuildModel.fromJson(guild, service: this))
-                .toList();
-        _ref.read(privateChannelsProvider.notifier).state =
+                .toList());
+        _ref.read(privateChannelsProvider.notifier).setAll(
             (data["private_channels"] as List)
                 .map((channel) => ChannelModel.fromJson(channel, service: this))
-                .toList();
+                .toList());
       case "MESSAGE_CREATE":
         _messageEventController.add(
           MessageEvent(
