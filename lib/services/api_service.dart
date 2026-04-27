@@ -56,28 +56,11 @@ final DiscordAPIOptions = BaseOptions(
 class ApiService {
   // this class is really a mess
 
-  ApiService._internal({required token}) : _token = token {
-    _connectGateway();
-  }
 
-  static ApiService? _instance;
   late final Ref _ref;
 
-  factory ApiService({String? token, Ref? ref}) {
-    assert(
-      token == null ? _instance != null : true,
-      "Please provide a token to initialize the service.",
-    );
-
-    if (token != null) {
-      _instance?.dispose();
-      _instance = ApiService._internal(token: token);
-    }
-    if (ref != null) {
-      _instance!._ref = ref;
-    }
-
-    return _instance!;
+  ApiService({required String token, required Ref ref}) : _token = token , _ref = ref {
+    _connectGateway();
   }
 
   void dispose() {
