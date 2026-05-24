@@ -42,7 +42,7 @@ class VoiceChannelView extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: null,
                   icon: const Icon(Icons.mic_none_rounded),
-                  label: const Text("Join Voice"),
+                  label: const Text("Join voice"),
                 ),
               ),
               const OpenChatButton(),
@@ -62,7 +62,7 @@ class OpenChatButton extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: () => Scaffold.of(context).openEndDrawer(),
       icon: const Icon(Icons.chat_bubble_outline_rounded),
-      label: const Text("Open Chat"),
+      label: const Text("Open chat"),
     );
   }
 }
