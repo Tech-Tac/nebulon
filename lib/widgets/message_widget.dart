@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:nebulon/models/message.dart';
 import 'package:nebulon/models/user.dart';
 import 'package:nebulon/helpers/cdn_image.dart';
@@ -30,6 +31,19 @@ class _MessageWidgetState extends State<MessageWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    TextTheme textTheme = Theme.of(context).textTheme.merge(
+      TextTheme(
+        bodyMedium: TextStyle(
+          color: widget.message.hasError ?
+            Theme.of(context).colorScheme.error
+              : widget.message.isPending ?
+                Theme.of(context).hintColor
+                  : null
+        )
+      )
+    );
+
     return Padding(
       padding:
           widget.showHeader ? const EdgeInsets.only(top: 16) : EdgeInsets.zero,
@@ -112,20 +126,13 @@ class _MessageWidgetState extends State<MessageWidget>
                       ),
                       if (!(widget.message.attachments.isNotEmpty &&
                           widget.message.content.isEmpty))
-                        SelectableText(
-                          widget.message.content,
-                          focusNode: FocusNode(canRequestFocus: false),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyMedium?.copyWith(
-                            color:
-                                widget.message.hasError
-                                    ? Theme.of(context).colorScheme.error
-                                    : widget.message.isPending
-                                    ? Theme.of(context).hintColor
-                                    : null,
+                          Markdown(
+                            data: widget.message.content,
+                            selectable: true,
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context).copyWith(textTheme: textTheme)),
                           ),
-                        ),
                       if (widget.message.editedTimestamp != null)
                         Tooltip(
                           message: DateFormat("yyyy/MM/dd, hh:mm:ss a").format(
