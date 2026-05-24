@@ -72,7 +72,6 @@ class MemberModel {
     required this.roles,
   });
 
-  @override
   factory MemberModel.fromJson(Json json) {
     return MemberModel(
       user: UserModel.fromJson(json["user"]),

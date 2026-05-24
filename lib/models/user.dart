@@ -39,7 +39,6 @@ class UserModel extends CacheableResource {
 
   static final CacheRegistry<UserModel> _cache = CacheRegistry();
 
-  @override
   factory UserModel.fromJson(Json json) {
     return UserModel(
       id: Snowflake(json["id"]),
