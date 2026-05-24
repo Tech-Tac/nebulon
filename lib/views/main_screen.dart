@@ -36,11 +36,7 @@ class ViewBody extends ConsumerWidget {
     final String? title = selectedChannel?.displayName;
 
     windowManager.setTitle(
-      [
-        "Nebulon",
-        if (kDebugMode) "Debug",
-        ?title,
-      ].join(" | "),
+      "Nebulon ${kDebugMode ? "(Debug)" : ""} | $title"
     );
 
     return Column(
