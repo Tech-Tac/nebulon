@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:nebulon/models/message.dart';
 import 'package:nebulon/models/user.dart';
@@ -132,6 +133,7 @@ class _MessageWidgetState extends State<MessageWidget>
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
                             styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context).copyWith(textTheme: textTheme)),
+                            inlineSyntaxes: [md.EmojiSyntax()],
                           ),
                       if (widget.message.editedTimestamp != null)
                         Tooltip(
