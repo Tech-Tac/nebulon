@@ -46,7 +46,6 @@ class MessageModel extends Resource {
   bool hasError = false; // same here
   String? nonce; // used to determine which message this was while pending
 
-  @override
   factory MessageModel.fromJson(Json json) {
     return MessageModel(
       id: Snowflake(json["id"]),
