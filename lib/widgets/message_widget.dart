@@ -137,10 +137,12 @@ class _MessageWidgetState extends State<MessageWidget>
                               inlineSyntaxes: [
                                 md.EmojiSyntax(),
                                 UserMentionSyntax(),
+                                ChannelMentionSyntax(),
                                 SpoilerSyntax(),
                               ],
                               builders: {
                                 'userMention': UserMentionBuilder(),
+                                'channelMention': ChannelMentionBuilder(),
                                 'spoiler': SpoilerBuilder(),
                               },
                             ),

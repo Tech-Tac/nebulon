@@ -3,6 +3,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:nebulon/models/base.dart';
+import 'package:nebulon/models/channel.dart';
 import 'package:nebulon/models/user.dart';
 import 'package:nebulon/providers/providers.dart';
 
@@ -18,7 +19,10 @@ class MentionWidget extends StatelessWidget{
           color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(4),
         ),
-        child: child,
+        child: DefaultTextStyle(
+          style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
+          child: child,
+        ),
     );
   }
 }
@@ -48,13 +52,35 @@ class UserMentionBuilder extends MarkdownElementBuilder {
       return MentionWidget(
         child: FutureBuilder(
           future: userFuture,
-          builder: (context, snapshot) => Text(
-            snapshot.hasData ? "@${snapshot.data.displayName}" : "@unknown user",
-            style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
-          )
+          builder: (context, snapshot) =>
+            Text(snapshot.hasData ? "@${snapshot.data.displayName}" : "@unknown user")
         ),
       );
     });
+  }
+}
+
+/// Parses channel mentions eg: <#1234567890>
+class ChannelMentionSyntax extends md.InlineSyntax {
+  ChannelMentionSyntax() : super(r'<#(\d+)>');
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final rawContent = match[1] ?? "";
+
+    final element = md.Element.text('channelMention', rawContent);
+    parser.addNode(element);
+    return true;
+  }
+}
+
+class ChannelMentionBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfterWithContext(BuildContext context, md.Element element, TextStyle? preferredStyle, TextStyle? parentStyle) {
+    final channel = ChannelModel.getById(int.parse(element.textContent));
+
+    return MentionWidget(
+      child: Text("#${channel?.displayName ?? "unknown channel"}")
+    );
   }
 }
 
