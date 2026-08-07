@@ -41,7 +41,7 @@ dependencies:
   universal_platform: ^1.1.0
   window_manager: ^0.5.0
   scroll_animator: ^0.3.0
-  flutter_secure_storage: ^10.0.0
+  flutter_secure_storage: ^11.0.0
   shared_preferences: ^2.5.2
 
   # The following adds the Cupertino Icons font to your application.
