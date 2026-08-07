@@ -8,21 +8,27 @@ import 'package:nebulon/models/user.dart';
 import 'package:nebulon/providers/providers.dart';
 
 class MentionWidget extends StatelessWidget{
-  const MentionWidget({super.key, required this.child});
+  const MentionWidget({super.key, required this.child, this.onTap});
   final Widget child;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 2),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(4),
+    return Material(
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      borderRadius: BorderRadius.circular(4),
+      child: InkWell(
+        mouseCursor: SystemMouseCursors.click,
+        borderRadius: BorderRadius.circular(4),
+        onTap: onTap,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+            child: DefaultTextStyle(
+              style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
+              child: child,
+            ),
         ),
-        child: DefaultTextStyle(
-          style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
-          child: child,
-        ),
+      ),
     );
   }
 }

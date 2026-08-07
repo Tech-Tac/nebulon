@@ -31,6 +31,7 @@ class ViewBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ChannelModel? selectedChannel = ref.watch(selectedChannelProvider);
+    final bool menuCollapsed = ref.watch(menuCollapsedProvider);
     final bool hasDrawer = ref.watch(hasDrawerProvider);
 
     final String? title = selectedChannel?.displayName;
@@ -78,7 +79,14 @@ class ViewBody extends ConsumerWidget {
           // the title-bar is not left aligned, we will put the controls on the left sidebar instead
           showWindowControls: !UniversalPlatform.isMacOS,
         ),
-        Expanded(child: MainChannelView(key: ValueKey("main-channel-view"))),
+        Expanded(child: ColoredBox(
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+          child: ClipRRect(
+            borderRadius: BorderRadiusGeometry.only(
+              topLeft: Radius.circular(menuCollapsed ? 8 : 0),
+            ),
+            child: Material(child: MainChannelView(key: ValueKey("main-channel-view"))))
+          )),
       ],
     );
   }
