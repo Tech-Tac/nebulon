@@ -36,14 +36,11 @@ class Snowflake {
   int get increment => value & 0xFFF;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || value == Snowflake(other).value;
-  bool operator >=(Object other) =>
-      identical(this, other) || value >= Snowflake(other).value;
-  bool operator <=(Object other) =>
-      identical(this, other) || value <= Snowflake(other).value;
-  bool operator >(Object other) => value > Snowflake(other).value;
-  bool operator <(Object other) => value < Snowflake(other).value;
+  bool operator ==(Object other) => identical(this, other) || value == Snowflake(other).value;
+  bool operator >=(Object other) => identical(this, other) || value >= Snowflake(other).value;
+  bool operator <=(Object other) => identical(this, other) || value <= Snowflake(other).value;
+  bool operator >(Object other)  => value > Snowflake(other).value;
+  bool operator <(Object other)  => value < Snowflake(other).value;
 
   @override
   int get hashCode => value;

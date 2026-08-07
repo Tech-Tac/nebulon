@@ -210,10 +210,10 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
                   final MessageModel? prevMessage = messages.elementAtOrNull(
                     index + 1,
                   );
-
+              
                   final bool showDayDivider =
                       message.timestamp.day != prevMessage?.timestamp.day;
-
+              
                   final bool showMessageHeader =
                       prevMessage == null ||
                       message.author.id != prevMessage.author.id ||
@@ -223,13 +223,13 @@ class _TextChannelViewState extends ConsumerState<TextChannelView> {
                           500 ||
                       message.type != MessageType.normal ||
                       showDayDivider;
-
+              
                   final MessageWidget messageWidget = MessageWidget(
                     key: ValueKey(message.id),
                     message: message,
                     showHeader: showMessageHeader,
                   );
-
+              
                   if (showDayDivider) {
                     return Column(
                       children: [

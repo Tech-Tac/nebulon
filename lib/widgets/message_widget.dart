@@ -6,6 +6,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:nebulon/models/message.dart';
 import 'package:nebulon/models/user.dart';
 import 'package:nebulon/helpers/cdn_image.dart';
+import 'package:nebulon/widgets/markdown.dart';
 import 'package:flutter_thumbhash/flutter_thumbhash.dart';
 import 'package:intl/intl.dart';
 
@@ -54,7 +55,7 @@ class _MessageWidgetState extends State<MessageWidget>
         child: ColoredBox(
           color:
               _isHovered
-                  ? Theme.of(context).colorScheme.surfaceContainerHigh
+                  ? Theme.of(context).colorScheme.surfaceContainer
                   : Colors.transparent,
           child: Padding(
             padding: const EdgeInsets.only(top: 2, bottom: 2, right: 16),
@@ -127,13 +128,22 @@ class _MessageWidgetState extends State<MessageWidget>
                       ),
                       if (!(widget.message.attachments.isNotEmpty &&
                           widget.message.content.isEmpty))
-                          Markdown(
-                            data: widget.message.content,
-                            selectable: true,
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context).copyWith(textTheme: textTheme)),
-                            inlineSyntaxes: [md.EmojiSyntax()],
+                          SelectionArea(
+                            child: Markdown(
+                              data: widget.message.content,
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context).copyWith(textTheme: textTheme)),
+                              inlineSyntaxes: [
+                                md.EmojiSyntax(),
+                                UserMentionSyntax(),
+                                SpoilerSyntax(),
+                              ],
+                              builders: {
+                                'userMention': UserMentionBuilder(),
+                                'spoiler': SpoilerBuilder(),
+                              },
+                            ),
                           ),
                       if (widget.message.editedTimestamp != null)
                         Tooltip(
