@@ -56,12 +56,10 @@ class MemberModel {
   List<RoleModel> roles;
 
   Color getRoleColor() {
-    roles.sort((a, b) => a.position.compareTo(b.position));
     return roles.lastWhere((role) => role.color != Color(0x00000000)).color;
   }
 
   String getRoleIconHash() {
-    roles.sort((a, b) => a.position.compareTo(b.position));
     return roles.lastWhere((role) => role.iconHash != null).iconHash!;
   }
 
@@ -70,7 +68,9 @@ class MemberModel {
     required this.joinedDate,
     this.nickname,
     required this.roles,
-  });
+  }){
+     roles.sort((a, b) => a.position.compareTo(b.position));
+  }
 
   factory MemberModel.fromJson(Json json) {
     return MemberModel(
@@ -109,15 +109,11 @@ class GuildModel extends Resource {
       id: Snowflake(json["id"]),
       name: json["name"],
       iconHash: json["icon"],
-      channels:
-          (json["channels"] as List)
-              .map(
-                (channelJson) =>
-                    ChannelModel.fromJson(channelJson, service: service),
-              )
-              .toList(),
-      roles:
-          (json["roles"] as List)
+      channels:(
+        json["channels"] as List).map((channelJson) =>
+          ChannelModel.fromJson(channelJson, service: service),
+      ).toList(),
+      roles: (json["roles"] as List)
               .map((role) => RoleModel.fromJson(role))
               .toList(),
     );

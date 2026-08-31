@@ -18,9 +18,9 @@ class MentionWidget extends StatelessWidget{
       color: Theme.of(context).colorScheme.secondaryContainer,
       borderRadius: BorderRadius.circular(4),
       child: InkWell(
-        mouseCursor: SystemMouseCursors.click,
-        borderRadius: BorderRadius.circular(4),
         onTap: onTap,
+        mouseCursor: onTap == null ? SystemMouseCursors.basic : SystemMouseCursors.click,
+        borderRadius: BorderRadius.circular(4),
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
             child: DefaultTextStyle(
